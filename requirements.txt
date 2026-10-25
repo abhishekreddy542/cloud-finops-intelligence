@@ -1,0 +1,13 @@
+# Core Web & API Framework
+fastapi>=0.110.0
+uvicorn>=0.28.0
+
+# Data Science & Machine Learning
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.4.0
+scipy>=1.10.0
+statsmodels>=0.14.0
+
+# Document & Report Generation
+python-docx>=1.1.0
