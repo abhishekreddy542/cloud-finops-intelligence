@@ -1,6 +1,6 @@
 /**
- * Abhi Cloud Tech — ApexCharts Visualization Suite
- * Distinct Brand Palette:
+ * Abhi Cloud Tech — ApexCharts Visualization Suite v4.0
+ * Distinct Multi-Cloud Executive Palette:
  *   AWS:   #FF9900 (Vibrant Orange)
  *   Azure: #0284C7 (Electric Blue)
  *   GCP:   #10B981 (Emerald Green - High Contrast against Azure)
@@ -57,18 +57,19 @@ const Charts = {
                     size: 7,
                     fillColor: provColor,
                     strokeColor: '#ffffff',
-                    strokeWidth: 2,
+                    strokeWidth: 2.5,
                     shape: 'circle'
                 },
                 label: {
                     borderColor: provColor,
-                    offsetY: -5,
+                    offsetY: -6,
                     style: {
                         color: '#ffffff',
                         background: provColor,
                         fontSize: '9px',
+                        fontFamily: 'JetBrains Mono',
                         fontWeight: 700,
-                        padding: { left: 4, right: 4, top: 2, bottom: 2 }
+                        padding: { left: 5, right: 5, top: 3, bottom: 3 }
                     },
                     text: `${a.CloudProvider} SPIKE`
                 }
@@ -85,7 +86,7 @@ const Charts = {
                 animations: {
                     enabled: true,
                     easing: 'easeinout',
-                    speed: 600
+                    speed: 650
                 }
             },
             colors: [CLOUD_COLORS.AWS, CLOUD_COLORS.Azure, CLOUD_COLORS.GCP],
@@ -94,20 +95,20 @@ const Charts = {
                 gradient: {
                     shade: 'dark',
                     type: 'vertical',
-                    shadeIntensity: 0.4,
-                    opacityFrom: 0.35,
-                    opacityTo: 0.05,
+                    shadeIntensity: 0.5,
+                    opacityFrom: 0.38,
+                    opacityTo: 0.03,
                     stops: [0, 95, 100]
                 }
             },
             stroke: {
                 curve: 'smooth',
-                width: 2.2
+                width: 2.5
             },
             xaxis: {
                 categories: dates,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px' },
+                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     rotate: -20,
                     hideOverlappingLabels: true
                 },
@@ -116,7 +117,7 @@ const Charts = {
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px' },
+                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => `$${Math.round(val).toLocaleString()}`
                 }
             },
@@ -126,7 +127,9 @@ const Charts = {
             },
             legend: {
                 position: 'top',
-                labels: { colors: '#94a3b8' }
+                labels: { colors: '#94a3b8' },
+                fontSize: '12px',
+                markers: { radius: 12 }
             },
             annotations: {
                 points: anomalyPoints
@@ -164,7 +167,8 @@ const Charts = {
             stroke: { width: 0 },
             legend: {
                 position: 'bottom',
-                labels: { colors: '#94a3b8' }
+                labels: { colors: '#94a3b8' },
+                fontSize: '12px'
             },
             plotOptions: {
                 pie: {
@@ -174,14 +178,17 @@ const Charts = {
                             show: true,
                             total: {
                                 show: true,
-                                label: 'Total Cloud',
+                                label: 'Multi-Cloud Spend',
                                 color: '#94a3b8',
+                                fontSize: '11px',
+                                fontWeight: 700,
                                 formatter: w => '$' + w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString()
                             },
                             value: {
                                 color: '#f8fafc',
-                                fontSize: '20px',
+                                fontSize: '22px',
                                 fontWeight: 800,
+                                fontFamily: 'JetBrains Mono',
                                 formatter: val => '$' + parseInt(val).toLocaleString()
                             }
                         }
@@ -231,7 +238,7 @@ const Charts = {
                 bar: {
                     horizontal: false,
                     borderRadius: 6,
-                    columnWidth: '50%'
+                    columnWidth: '45%'
                 }
             },
             xaxis: {
@@ -244,7 +251,7 @@ const Charts = {
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px' },
+                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => '$' + Math.round(val).toLocaleString()
                 }
             },
@@ -276,7 +283,7 @@ const Charts = {
 
         const options = {
             series: [{
-                name: 'Cost Driver Spend ($)',
+                name: 'Daily Spend ($)',
                 data: data
             }],
             chart: {
@@ -285,24 +292,24 @@ const Charts = {
                 background: 'transparent',
                 toolbar: { show: false }
             },
-            colors: ['#8b5cf6'],
+            colors: ['#6366f1'],
             plotOptions: {
                 bar: {
                     horizontal: true,
                     borderRadius: 6,
-                    barHeight: '55%'
+                    barHeight: '52%'
                 }
             },
             xaxis: {
                 categories: categories,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px' },
+                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => '$' + Math.round(val).toLocaleString()
                 }
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#94a3b8', fontSize: '11px' }
+                    style: { colors: '#94a3b8', fontSize: '11px', fontWeight: 600 }
                 }
             },
             grid: {
@@ -320,7 +327,7 @@ const Charts = {
         this.instances[containerId] = chart;
     },
 
-    // 5. Predictive Forecast with 95% Quantile Bounds
+    // 5. Predictive Multi-Horizon Spend Forecast
     renderForecast(containerId, historical, forecast) {
         if (this.instances[containerId]) this.instances[containerId].destroy();
 
@@ -343,11 +350,11 @@ const Charts = {
         const options = {
             series: [
                 {
-                    name: 'Historical Spend',
+                    name: 'Historical Actual Spend',
                     data: histData.concat(new Array(forecast.length).fill(null))
                 },
                 {
-                    name: 'ML Predicted Spend',
+                    name: 'Forecasted Spend Trajectory',
                     data: forecastData
                 },
                 {
@@ -363,18 +370,23 @@ const Charts = {
                 type: 'line',
                 height: 400,
                 background: 'transparent',
-                toolbar: { show: false }
+                toolbar: { show: false },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 700
+                }
             },
             colors: ['#64748b', '#10b981', '#38bdf8', '#0284c7'],
             stroke: {
-                width: [2, 3, 1.5, 1.5],
+                width: [2, 3, 1.8, 1.8],
                 curve: 'smooth',
                 dashArray: [0, 0, 4, 4]
             },
             xaxis: {
                 categories: allDates,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px' },
+                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     rotate: -20,
                     hideOverlappingLabels: true
                 },
@@ -382,7 +394,7 @@ const Charts = {
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px' },
+                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => val ? `$${Math.round(val).toLocaleString()}` : ''
                 }
             },
@@ -446,12 +458,12 @@ const Charts = {
             xaxis: {
                 categories: categories,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px' },
+                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => '$' + Math.round(val).toLocaleString()
                 }
             },
             yaxis: {
-                labels: { style: { colors: '#94a3b8', fontSize: '11px' } }
+                labels: { style: { colors: '#94a3b8', fontSize: '11px', fontWeight: 600 } }
             },
             grid: {
                 borderColor: 'rgba(255, 255, 255, 0.05)',
@@ -459,7 +471,7 @@ const Charts = {
             },
             tooltip: {
                 theme: 'dark',
-                y: { formatter: val => '$' + Math.round(val).toLocaleString() }
+                y: { formatter: val => '$' + val.toLocaleString() }
             }
         };
 

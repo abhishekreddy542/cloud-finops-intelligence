@@ -1,0 +1,55 @@
+{
+  "organization": "Abhi Cloud Tech",
+  "lead_architect": "Abhishek",
+  "last_updated": "2026-10-31T16:05:49.781051+00:00",
+  "dataset_records": 32850,
+  "models": {
+    "anomaly_detection": {
+      "algorithm": "Calibrated Multivariate Isolation Forest",
+      "status": "Production Active",
+      "artifact_path": "models/anomaly_detector_isolation_forest.joblib",
+      "artifact_size_bytes": 2260945,
+      "artifact_size_mb": 2.16,
+      "contamination": 0.0184,
+      "estimators": 200,
+      "features": [
+        "DailyCost_USD",
+        "vCPU_Hours",
+        "Avg_CPU_Utilization_Pct",
+        "Data_Egress_GB",
+        "Storage_TB",
+        "robust_cost_zscore",
+        "cost_to_median_ratio",
+        "cost_per_cpu_pct"
+      ]
+    },
+    "spend_forecasting": {
+      "algorithm": "Residual HistGradientBoosting with Deterministic Ridge Trend & Fourier Seasonality",
+      "status": "Production Active",
+      "artifact_path": "models/spend_forecaster_histgradient.joblib",
+      "artifact_size_bytes": 573333,
+      "artifact_size_mb": 0.55,
+      "quantiles": [
+        0.05,
+        0.5,
+        0.95
+      ],
+      "metrics": {
+        "MAE_USD": 837.43,
+        "RMSE_USD": 1363.81,
+        "MAPE_Pct": 4.01,
+        "Test_Sample_Count": 55,
+        "Mean_Daily_Spend_USD": 21238.9,
+        "Quantile_Crossing_Violations": 0,
+        "Empirical_Coverage_Pct": 70.91,
+        "Upper_Pinball_Loss": 286.91,
+        "Lower_Pinball_Loss": 79.22,
+        "mae": 837.43,
+        "rmse": 1363.81,
+        "mape": 4.01,
+        "pinball_loss_mean": 183.065,
+        "quantile_crossing_violations": 0
+      }
+    }
+  }
+}

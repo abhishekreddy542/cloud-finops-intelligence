@@ -16,7 +16,10 @@
                             850: '#0c1322',
                             900: '#090d16',
                             950: '#040711',
-                        }
+                        },
+                        aws: '#FF9900',
+                        azure: '#0284C7',
+                        gcp: '#10B981'
                     }
                 }
             }
@@ -28,101 +31,178 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body class="bg-slate-950 text-slate-100 flex min-h-screen">
+<body class="bg-slate-950 text-slate-100 flex min-h-screen antialiased selection:bg-sky-500/30 selection:text-sky-200">
 
     <!-- ================= SIDEBAR ================= -->
-    <aside class="w-64 bg-slate-900 border-r border-slate-800/80 flex flex-col shrink-0 min-h-screen sticky top-0 h-screen overflow-y-auto">
+    <aside class="w-64 bg-slate-900/95 border-r border-slate-800/80 flex flex-col shrink-0 min-h-screen sticky top-0 h-screen overflow-y-auto backdrop-blur-md z-40">
         <!-- Brand Header -->
         <div class="p-5 border-b border-slate-800/80">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
-                    <i data-lucide="cloud-lightning" class="w-5 h-5 text-slate-950"></i>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-sky-500/25 border border-sky-400/30">
+                    <i data-lucide="cloud-lightning" class="w-5 h-5 text-white"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-base tracking-tight text-white leading-tight">Abhi Cloud Tech</h1>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-950/60 border border-sky-800/60 px-1.5 py-0.5 rounded">FinOps Control Plane</span>
+                    <h1 class="font-extrabold text-sm tracking-tight text-white leading-tight flex items-center gap-1.5">
+                        <span>Abhi Cloud Tech</span>
+                    </h1>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 font-mono">FinOps Control Plane</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Navigation Menu -->
-        <nav class="p-3 space-y-1">
-            <a href="#" data-tab="overview" class="nav-link active flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
+        <nav class="p-3 space-y-1.5">
+            <a href="#" data-tab="overview" class="nav-link active flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 transition-all">
                 <i data-lucide="layout-dashboard" class="w-4 h-4 text-sky-400"></i>
                 <span>Executive Command</span>
             </a>
-            <a href="#" data-tab="analytics" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
+            <a href="#" data-tab="analytics" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 transition-all">
                 <i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-400"></i>
                 <span>Cost Analytics</span>
             </a>
-            <a href="#" data-tab="anomalies" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
+            <a href="#" data-tab="anomalies" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 transition-all">
                 <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
-                <span>ML Anomaly Radar</span>
+                <span>Anomaly Detection Radar</span>
+                <span class="ml-auto text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">RADAR</span>
             </a>
-            <a href="#" data-tab="forecasting" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
+            <a href="#" data-tab="forecasting" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 transition-all">
                 <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
                 <span>Budget Forecaster</span>
             </a>
-            <a href="#" data-tab="optimization" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
+            <a href="#" data-tab="optimization" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 transition-all">
                 <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
                 <span>Rightsizing Engine</span>
+                <span class="ml-auto text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">FINOPS</span>
             </a>
         </nav>
 
         <!-- Scope & Filters Section -->
-        <div class="p-4 border-t border-slate-800/80 mt-2 space-y-4">
+        <div class="p-4 border-t border-slate-800/80 mt-1 space-y-4">
             <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Cloud Platforms</span>
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-400"></i>
+                    <span>Cloud Platforms</span>
+                </span>
+                <span class="flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-[#FF9900]" title="AWS"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#0284C7]" title="Azure"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#10B981]" title="GCP"></span>
+                </span>
             </div>
+            
             <div id="providerFilters" class="space-y-2">
-                <!-- Injected via JS -->
+                <!-- Injected via JS with Provider Badges -->
             </div>
 
             <div class="pt-2">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Cost Centers</span>
-                <div id="deptFilters" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <i data-lucide="building-2" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span>Cost Centers</span>
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-mono">Depts</span>
+                </div>
+                <div id="deptFilters" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
                     <!-- Injected via JS -->
                 </div>
             </div>
 
-            <button id="resetFiltersBtn" class="w-full mt-3 py-1.5 px-3 rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-[11px] font-semibold text-slate-300 transition-all flex items-center justify-center gap-2">
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <!-- Active Telemetry Metadata Scope -->
+            <div id="scopeDataSpan" class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80 text-[10px] text-slate-400 font-mono space-y-1">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-500">Data Span:</span>
+                    <span id="telemetryDateRange" class="text-sky-400 font-semibold truncate ml-1">--</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-500">Telemetry Volume:</span>
+                    <span id="telemetryRecordCount" class="text-emerald-400 font-bold">-- records</span>
+                </div>
+            </div>
+
+            <button id="resetFiltersBtn" class="w-full mt-2 py-2 px-3 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-sky-400"></i>
                 <span>Reset Active Scope</span>
             </button>
         </div>
 
         <!-- Footer Meta -->
-        <div class="mt-auto p-4 border-t border-slate-800/80 bg-slate-900/50 text-[11px] text-slate-500 space-y-1">
-            <div class="flex justify-between">
-                <span>Production Mode</span>
-                <span class="text-emerald-400 font-semibold font-mono">LIVE API</span>
+        <div class="mt-auto p-4 border-t border-slate-800/80 bg-slate-950/60 text-[11px] text-slate-400 space-y-1.5 font-mono">
+            <div class="flex justify-between items-center">
+                <span class="text-slate-500">FastAPI Control Plane</span>
+                <span class="text-emerald-400 font-bold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    ONLINE 200 OK
+                </span>
             </div>
-            <div class="flex justify-between">
-                <span>Model Engine</span>
-                <span class="text-slate-400 font-mono">GB-Quantile 3.0</span>
+            <div class="flex justify-between items-center">
+                <span class="text-slate-500">Forecast Interval</span>
+                <span class="text-sky-400 font-semibold">95% Risk Envelope</span>
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-slate-600 pt-1 border-t border-slate-800/60">
+                <span>FinOps Framework</span>
+                <span>v3.4 Production</span>
             </div>
         </div>
     </aside>
 
     <!-- ================= MAIN CONTENT ================= -->
-    <main class="flex-1 flex flex-col overflow-y-auto">
+    <main class="flex-1 flex flex-col overflow-y-auto min-w-0">
         <!-- Top App Bar -->
-        <header class="h-16 border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-30">
+        <header class="h-16 border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl px-8 flex items-center justify-between sticky top-0 z-30">
             <div class="flex items-center gap-4">
-                <span class="text-sm font-semibold text-slate-300">Enterprise Infrastructure Control Plane</span>
-                <span class="text-slate-600">/</span>
-                <span class="text-xs text-sky-400 bg-sky-950/80 border border-sky-800/50 px-2 py-0.5 rounded-full font-mono">Multi-Cloud Ingestion</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    <span class="text-slate-300 font-medium">FinOps Maturity:</span>
-                    <span id="kpiMaturityStage" class="font-bold text-white">Walk (Proactive)</span>
+                <span class="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                    <i data-lucide="terminal" class="w-4 h-4 text-sky-400"></i>
+                    <span>Enterprise Multi-Cloud FinOps Control Plane</span>
+                </span>
+                <span class="text-slate-700">|</span>
+                <div class="hidden sm:flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-sky-950/60 border border-sky-800/50 text-[11px] text-sky-300 font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
+                    <span>Live Telemetry Feed</span>
                 </div>
-                <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-sky-400">
-                    AR
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-900/80 px-3 py-1 rounded-lg border border-slate-800">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-500"></i>
+                    <span id="liveClockDisplay">UTC 00:00:00</span>
+                </div>
+                
+                <!-- Last Refreshed Pill & Refresh Trigger -->
+                <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800 text-xs font-mono">
+                    <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                    <span class="text-slate-400 hidden sm:inline">Refreshed:</span>
+                    <span id="lastRefreshedPill" class="text-sky-300 font-semibold">Just now</span>
+                    <button id="btnRefreshTelemetry" type="button" class="ml-1 p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-all active:scale-95 cursor-pointer" title="Refresh Live Multi-Cloud Telemetry & Models">
+                        <i id="refreshIcon" data-lucide="refresh-cw" class="w-3 h-3 text-sky-400"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/50 border border-emerald-800/60 text-xs shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-emerald-500/50 shadow-sm"></span>
+                    <span class="text-slate-300 font-medium hidden lg:inline">FinOps Maturity:</span>
+                    <span id="kpiMaturityStage" class="font-bold text-emerald-300 font-mono">Walk (Proactive)</span>
+                </div>
+
+                <!-- User Profile & Explicit Logout Control -->
+                <div class="flex items-center gap-3 pl-3 border-l border-slate-800">
+                    <div class="flex items-center gap-2.5">
+                        <div id="userAvatarText" class="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 border border-sky-400/40 flex items-center justify-center text-xs font-extrabold text-white shadow-md shadow-sky-500/20">
+                            AR
+                        </div>
+                        <div class="hidden xl:block text-left">
+                            <div id="userDisplayName" class="text-xs font-bold text-white leading-tight">M Abhishek Reddy</div>
+                            <div id="userHandle" class="text-[10px] text-sky-400 font-mono leading-tight">@abhishek</div>
+                        </div>
+                    </div>
+                    <button id="btnLogout" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-rose-950/60 text-slate-300 hover:text-rose-400 border border-slate-800 hover:border-rose-800/60 transition-all text-xs font-semibold cursor-pointer active:scale-95 shadow-sm" title="Log out of session">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
             </div>
         </header>
@@ -130,60 +210,111 @@
         <!-- Tab 1: Executive Command Center -->
         <section id="tab-overview" class="tab-content p-8 space-y-6">
             <!-- Hero KPIs -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div class="glass-panel p-5 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-sky-500"></div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Spend (YTD)</span>
-                    <div id="kpiTotalSpend" class="text-2xl font-extrabold text-white mt-1.5 font-mono">$0</div>
-                    <span class="text-xs text-slate-500 mt-1 block">AWS + Azure + GCP Combined</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Total Spend -->
+                <div class="kpi-card kpi-sky">
+                    <div class="flex items-center justify-between text-slate-400 mb-1">
+                        <span class="text-[11px] font-bold uppercase tracking-wider">Total Spend (YTD)</span>
+                        <div class="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                            <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div id="kpiTotalSpend" class="text-2xl font-extrabold text-white mt-1 font-mono tracking-tight">$0</div>
+                    <div class="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1.5">
+                        <span class="text-sky-400 font-semibold">AWS + Azure + GCP</span>
+                    </div>
                 </div>
-                <div class="glass-panel p-5 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-indigo-500"></div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Annual Run-Rate</span>
-                    <div id="kpiRunRate" class="text-2xl font-extrabold text-white mt-1.5 font-mono">$0</div>
-                    <span class="text-xs text-slate-500 mt-1 block">Trailing 90-day trajectory</span>
+
+                <!-- Annual Run-Rate -->
+                <div class="kpi-card kpi-indigo">
+                    <div class="flex items-center justify-between text-slate-400 mb-1">
+                        <span class="text-[11px] font-bold uppercase tracking-wider">Annual Run-Rate</span>
+                        <div class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                            <i data-lucide="gauge" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div id="kpiRunRate" class="text-2xl font-extrabold text-white mt-1 font-mono tracking-tight">$0</div>
+                    <div class="text-[11px] text-slate-400 mt-1.5">
+                        <span>Trailing 90-day trajectory</span>
+                    </div>
                 </div>
-                <div class="glass-panel p-5 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Identified Savings</span>
-                    <div id="kpiSavings" class="text-2xl font-extrabold text-emerald-400 mt-1.5 font-mono">$0</div>
-                    <span id="kpiSavingsPct" class="text-xs text-emerald-500 font-semibold mt-1 block">32.9% reduction</span>
+
+                <!-- Identified Savings -->
+                <div class="kpi-card kpi-emerald">
+                    <div class="flex items-center justify-between text-slate-400 mb-1">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Identified Savings</span>
+                        <div class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                            <i data-lucide="piggy-bank" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div id="kpiSavings" class="text-2xl font-extrabold text-emerald-400 mt-1 font-mono tracking-tight">$0</div>
+                    <div id="kpiSavingsPct" class="text-[11px] text-emerald-400 font-semibold mt-1.5 font-mono">
+                        32.9% spend reduction
+                    </div>
                 </div>
-                <div class="glass-panel p-5 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-rose-500"></div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Anomalous Waste</span>
-                    <div id="kpiWaste" class="text-2xl font-extrabold text-rose-400 mt-1.5 font-mono">$0</div>
-                    <span id="kpiIncidentsCount" class="text-xs text-rose-500 font-semibold mt-1 block">0 incidents flagged</span>
+
+                <!-- Anomalous Waste -->
+                <div class="kpi-card kpi-rose">
+                    <div class="flex items-center justify-between text-slate-400 mb-1">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-rose-400">Anomalous Waste</span>
+                        <div class="w-7 h-7 rounded-lg bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                            <i data-lucide="flame" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div id="kpiWaste" class="text-2xl font-extrabold text-rose-400 mt-1 font-mono tracking-tight">$0</div>
+                    <div id="kpiIncidentsCount" class="text-[11px] text-rose-400 font-semibold mt-1.5 font-mono">
+                        0 spikes detected
+                    </div>
                 </div>
-                <div class="glass-panel p-5 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Compute Efficiency</span>
-                    <div id="kpiCpu" class="text-2xl font-extrabold text-amber-400 mt-1.5 font-mono">0.0%</div>
-                    <span class="text-xs text-slate-500 mt-1 block">Average fleet CPU utilization</span>
+
+                <!-- Fleet CPU Utilization -->
+                <div class="kpi-card kpi-amber">
+                    <div class="flex items-center justify-between text-slate-400 mb-1">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400">Fleet Efficiency</span>
+                        <div class="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                            <i data-lucide="cpu" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div id="kpiCpu" class="text-2xl font-extrabold text-amber-400 mt-1 font-mono tracking-tight">0.0%</div>
+                    <div class="text-[11px] text-slate-400 mt-1.5">
+                        <span>Average fleet CPU usage</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Main Charts Row -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Daily Multi-Cloud Spend Chart -->
                 <div class="glass-panel p-6 lg:col-span-2">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
                         <div>
-                            <h2 class="text-base font-bold text-white">Daily Multi-Cloud Spend & Anomaly Trajectory</h2>
-                            <p class="text-xs text-slate-400">Granular daily spend per cloud platform with color-coded ML anomaly markers</p>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-base font-bold text-white tracking-tight">Daily Multi-Cloud Spend & Anomaly Trajectory</h2>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-sky-950/80 text-sky-300 border border-sky-800/50">Dual ML Radar</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">Granular daily expenditure across AWS, Azure, and GCP with highlighted ML anomaly triggers</p>
                         </div>
-                        <div class="flex items-center gap-3 text-[11px] font-semibold bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#FF9900]"></span> AWS</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#0284C7]"></span> Azure</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span> GCP</span>
+                        <div class="flex items-center gap-3 text-xs font-semibold bg-slate-900/90 px-3.5 py-1.5 rounded-xl border border-slate-800 shadow-sm">
+                            <span class="flex items-center gap-1.5 text-slate-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#FF9900] shadow-sm shadow-[#FF9900]/50"></span> AWS
+                            </span>
+                            <span class="flex items-center gap-1.5 text-slate-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] shadow-sm shadow-[#0284C7]/50"></span> Azure
+                            </span>
+                            <span class="flex items-center gap-1.5 text-slate-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm shadow-[#10B981]/50"></span> GCP
+                            </span>
                         </div>
                     </div>
                     <div id="dailySpendChart" class="min-h-[350px]"></div>
                 </div>
+
+                <!-- Donut Chart -->
                 <div class="glass-panel p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h2 class="text-base font-bold text-white">Cloud Provider Allocation</h2>
-                            <p class="text-xs text-slate-400">Spend distribution across AWS, Azure, GCP</p>
+                            <h2 class="text-base font-bold text-white tracking-tight">Cloud Provider Allocation</h2>
+                            <p class="text-xs text-slate-400 mt-0.5">Spend distribution across AWS, Azure, GCP</p>
                         </div>
                     </div>
                     <div id="providerDonutChart" class="min-h-[340px]"></div>
@@ -195,53 +326,180 @@
         <section id="tab-analytics" class="tab-content p-8 space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="glass-panel p-6">
-                    <h2 class="text-base font-bold text-white mb-1">Spend by Engineering Division</h2>
-                    <p class="text-xs text-slate-400 mb-4">Departmental allocation across cloud providers</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-white">Spend by Engineering Division</h2>
+                            <p class="text-xs text-slate-400">Departmental breakdown aggregated across cloud vendors</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                            <i data-lucide="building" class="w-4 h-4"></i>
+                        </div>
+                    </div>
                     <div id="deptSpendChart" class="min-h-[360px]"></div>
                 </div>
+                
                 <div class="glass-panel p-6">
-                    <h2 class="text-base font-bold text-white mb-1">Top Infrastructure Cost Drivers</h2>
-                    <p class="text-xs text-slate-400 mb-4">Highest-cost cloud services across all regions</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-white">Top Infrastructure Cost Drivers</h2>
+                            <p class="text-xs text-slate-400">Highest consumption cloud services & managed databases</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                            <i data-lucide="server" class="w-4 h-4"></i>
+                        </div>
+                    </div>
                     <div id="topServicesChart" class="min-h-[360px]"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Tab 3: ML Anomaly Radar -->
+        <!-- Tab 3: Anomaly Detection Radar -->
         <section id="tab-anomalies" class="tab-content p-8 space-y-6 hidden">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-xl font-extrabold text-white">Machine Learning Anomaly Radar</h2>
-                    <p class="text-xs text-slate-400">Dual-layer Isolation Forest & 14-day Rolling Z-Scores with automated root-cause diagnostics</p>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-xl font-extrabold text-white tracking-tight">Cloud Anomaly Detection Radar</h2>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono bg-rose-950/80 text-rose-300 border border-rose-800/60 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
+                            ACTIVE SURGE MONITORING
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">Continuous multi-cloud billing spike detection with automated root-cause diagnosis and remediation guidance</p>
                 </div>
-                <!-- Severity Filter Chips -->
-                <div class="flex items-center gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-                    <button data-severity="ALL" class="severity-chip active px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all">All Incidents</button>
-                    <button data-severity="CRITICAL" class="severity-chip px-3 py-1 rounded-lg text-xs font-semibold text-rose-400 hover:text-rose-300 transition-all">Critical Only</button>
-                    <button data-severity="HIGH" class="severity-chip px-3 py-1 rounded-lg text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all">High Only</button>
-                    <button data-severity="MEDIUM" class="severity-chip px-3 py-1 rounded-lg text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-all">Medium Only</button>
+                <!-- Severity, Cloud Platform Filter Chips & Export Action -->
+                <div class="flex items-center gap-2.5 flex-wrap justify-between">
+                    <!-- Left Group: Severity Filter Chips -->
+                    <div class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 shadow-sm flex-wrap">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 font-mono">Severity:</span>
+                        <button data-severity="ALL" class="severity-chip active px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all flex items-center gap-1.5">
+                            <span>All</span>
+                            <span id="chipCountAll" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300 font-bold">--</span>
+                        </button>
+                        <button data-severity="CRITICAL" class="severity-chip px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-400 hover:text-rose-300 transition-all flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                            <span>Critical</span>
+                            <span id="chipCountCritical" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-rose-950/80 text-rose-300 border border-rose-800/50 font-bold">--</span>
+                        </button>
+                        <button data-severity="HIGH" class="severity-chip px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                            <span>High</span>
+                            <span id="chipCountHigh" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-amber-950/80 text-amber-300 border border-amber-800/50 font-bold">--</span>
+                        </button>
+                        <button data-severity="MEDIUM" class="severity-chip px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-all flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                            <span>Medium</span>
+                            <span id="chipCountMedium" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 font-bold">--</span>
+                        </button>
+                    </div>
+
+                    <!-- Right Group: Cloud Platform Filter Chips -->
+                    <div class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 shadow-sm flex-wrap">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 font-mono">Platform:</span>
+                        <button data-platform="ALL" class="platform-chip active px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all flex items-center gap-1.5">
+                            <span>All Clouds</span>
+                            <span id="chipCountCloudAll" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300 font-bold">--</span>
+                        </button>
+                        <button data-platform="AWS" class="platform-chip px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-[#FF9900]"></span>
+                            <span>AWS</span>
+                            <span id="chipCountAWS" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-amber-950/80 text-amber-300 border border-amber-800/50 font-bold">--</span>
+                        </button>
+                        <button data-platform="Azure" class="platform-chip px-3 py-1.5 rounded-lg text-xs font-semibold text-sky-400 hover:text-sky-300 transition-all flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-[#0284C7]"></span>
+                            <span>Azure</span>
+                            <span id="chipCountAzure" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-sky-950/80 text-sky-300 border border-sky-800/50 font-bold">--</span>
+                        </button>
+                        <button data-platform="GCP" class="platform-chip px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-all flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                            <span>GCP</span>
+                            <span id="chipCountGCP" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 font-bold">--</span>
+                        </button>
+                    </div>
+
+                    <button id="btnExportAnomalies" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/90 hover:bg-slate-700 text-sky-400 hover:text-sky-300 border border-slate-700/80 hover:border-sky-500/50 transition-all flex items-center gap-1.5 active:scale-95 shadow-sm cursor-pointer ml-auto" title="Export currently filtered anomalies as an RFC-4180 CSV report">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Export CSV</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="glass-panel overflow-hidden">
+            <!-- Anomaly Search, Sort & Quick Filter Controls -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/80 border border-slate-800/90 text-xs">
+                <div class="flex items-center gap-2 w-full sm:w-auto flex-1 max-w-md">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                    <input id="anomalySearchInput" type="text" placeholder="Search by resource, service, diagnosis, or department..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500">
+                </div>
+                <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                    <label class="text-[11px] text-slate-400 font-medium whitespace-nowrap">Sort By:</label>
+                    <select id="anomalySortSelect" class="bg-slate-950/90 border border-slate-800 text-slate-200 text-xs rounded-xl py-1.5 px-2.5 focus:outline-none focus:border-sky-500">
+                        <option value="date_desc">Newest Date First (Default)</option>
+                        <option value="provider_aws">Cloud: AWS → Azure → GCP</option>
+                        <option value="provider_gcp">Cloud: GCP → Azure → AWS</option>
+                        <option value="severity_desc">Severity (Critical → High → Med)</option>
+                        <option value="spend_desc">Highest Observed Spend ($)</option>
+                        <option value="surge_desc">Largest Cost Surge ($)</option>
+                        <option value="date_asc">Oldest Date First</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="glass-panel overflow-hidden border border-slate-800/90">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b border-slate-800 bg-slate-900/80 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                                <th class="py-3 px-4">Date</th>
-                                <th class="py-3 px-4">Cloud</th>
-                                <th class="py-3 px-4">Division</th>
-                                <th class="py-3 px-4">Resource Service</th>
-                                <th class="py-3 px-4">Daily Spend</th>
-                                <th class="py-3 px-4">Excess Surge</th>
-                                <th class="py-3 px-4">Severity</th>
-                                <th class="py-3 px-4">Root Cause Diagnostic</th>
+                            <tr class="border-b border-slate-800 bg-slate-900/90 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                <th class="py-3.5 px-4">Event Date</th>
+                                <th class="py-3.5 px-4">Provider</th>
+                                <th class="py-3.5 px-4">Cost Center</th>
+                                <th class="py-3.5 px-4">Resource & Service</th>
+                                <th class="py-3.5 px-4">Observed Spend</th>
+                                <th class="py-3.5 px-4">Excess Surge</th>
+                                <th class="py-3.5 px-4">Severity</th>
+                                <th class="py-3.5 px-4">Diagnostic & Root Cause</th>
                             </tr>
                         </thead>
                         <tbody id="anomalyTableBody" class="divide-y divide-slate-800/40 text-xs">
                             <!-- Populated via JS -->
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Navigation & Pagination Toolbar -->
+                <div class="p-3.5 border-t border-slate-800/90 bg-slate-900/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <span>Showing <strong id="anomalyStartIdx" class="text-white font-mono">0</strong> to <strong id="anomalyEndIdx" class="text-white font-mono">0</strong> of <strong id="anomalyTotalCount" class="text-sky-400 font-mono">0</strong> incidents</span>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[11px] text-slate-500 font-medium">Per Page:</span>
+                            <select id="anomalyPageSizeSelect" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-lg py-1 px-2 focus:outline-none focus:border-sky-500">
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                            </select>
+                        </div>
+
+                        <!-- Page Nav Buttons -->
+                        <div class="flex items-center gap-1">
+                            <button id="btnAnomalyFirst" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700/60 transition-all font-mono text-[11px]" title="First Page">
+                                &laquo;
+                            </button>
+                            <button id="btnAnomalyPrev" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700/60 transition-all text-xs font-semibold flex items-center gap-1">
+                                &lsaquo; Prev
+                            </button>
+                            <span class="px-3 py-1 rounded-lg bg-slate-950 border border-slate-800 font-mono text-[11px] text-slate-300">
+                                Page <strong id="anomalyCurrentPage" class="text-white">1</strong> of <strong id="anomalyTotalPages" class="text-white">1</strong>
+                            </span>
+                            <button id="btnAnomalyNext" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700/60 transition-all text-xs font-semibold flex items-center gap-1">
+                                Next &rsaquo;
+                            </button>
+                            <button id="btnAnomalyLast" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700/60 transition-all font-mono text-[11px]" title="Last Page">
+                                &raquo;
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -251,52 +509,85 @@
             <div class="glass-panel p-6">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h2 class="text-xl font-extrabold text-white">Predictive Demand & Cloud Budget Forecaster</h2>
-                        <p class="text-xs text-slate-400">Recursive HistGradientBoosting with 95% Quantile pinball confidence intervals</p>
-                    </div>
-                    <div class="flex items-center gap-4 text-xs">
-                        <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
-                            <span class="text-slate-400">Model MAPE:</span>
-                            <span id="forecastMape" class="font-bold text-emerald-400 font-mono ml-1">4.87%</span>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl font-extrabold text-white tracking-tight">Predictive Multi-Cloud Budget Forecaster</h2>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 font-semibold">Multi-Horizon Engine</span>
                         </div>
-                        <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
-                            <span class="text-slate-400">Model RMSE:</span>
-                            <span id="forecastRmse" class="font-bold text-sky-400 font-mono ml-1">$1,573</span>
+                        <p class="text-xs text-slate-400 mt-1">Multi-horizon cloud spend forecasting with 95% statistical confidence intervals</p>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs font-mono">
+                        <div class="px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center gap-2 shadow-sm">
+                            <span class="text-slate-400">Forecast Error (MAPE):</span>
+                            <span id="forecastMape" class="font-bold text-emerald-400">4.87%</span>
+                        </div>
+                        <div class="px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center gap-2 shadow-sm">
+                            <span class="text-slate-400">Spend Variance (RMSE):</span>
+                            <span id="forecastRmse" class="font-bold text-sky-400">$1,573</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Scenario Sliders Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 mb-6 shadow-inner">
                     <div>
                         <div class="flex justify-between text-xs font-semibold mb-2">
-                            <span class="text-slate-300">Organic Growth / AI Scaling</span>
-                            <span id="growthVal" class="text-sky-400 font-mono">+15%</span>
+                            <span class="text-slate-300 flex items-center gap-1.5">
+                                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-sky-400"></i>
+                                <span>Organic Growth / AI Scaling</span>
+                            </span>
+                            <span id="growthVal" class="text-sky-400 font-mono font-bold px-2 py-0.5 rounded bg-sky-950/80 border border-sky-800/60">+15%</span>
                         </div>
                         <input id="workloadGrowthSlider" type="range" min="-20" max="60" value="15" step="5">
+                        <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                            <span>-20% (Contraction)</span>
+                            <span>+60% (Hyperscale)</span>
+                        </div>
                     </div>
+
                     <div>
                         <div class="flex justify-between text-xs font-semibold mb-2">
-                            <span class="text-slate-300">Rightsizing Optimization Discount</span>
-                            <span id="savingsVal" class="text-emerald-400 font-mono">-10%</span>
+                            <span class="text-slate-300 flex items-center gap-1.5">
+                                <i data-lucide="scissors" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                <span>Rightsizing Optimization Discount</span>
+                            </span>
+                            <span id="savingsVal" class="text-emerald-400 font-mono font-bold px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/60">-10%</span>
                         </div>
                         <input id="finopsSavingsSlider" type="range" min="0" max="35" value="10" step="5">
+                        <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                            <span>0% (As-is)</span>
+                            <span>-35% (Max FinOps)</span>
+                        </div>
                     </div>
+
                     <div>
-                        <label class="text-xs font-semibold text-slate-300 block mb-2">Forecast Horizon</label>
-                        <select id="forecastHorizonSelect" class="w-full bg-slate-800 border border-slate-700 text-xs rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
-                            <option value="30">30 Days Ahead</option>
-                            <option value="60" selected>60 Days Ahead</option>
-                            <option value="90">90 Days Ahead</option>
+                        <label class="text-xs font-semibold text-slate-300 block mb-2 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <span>Forecast Trajectory Window</span>
+                        </label>
+                        <select id="forecastHorizonSelect" class="w-full bg-slate-800/90 border border-slate-700 text-xs rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-sky-500">
+                            <option value="30">30 Days (Trailing Quarter)</option>
+                            <option value="60" selected>60 Days (Standard Planning)</option>
+                            <option value="90">90 Days (Quarterly Horizon)</option>
                         </select>
                     </div>
                 </div>
 
                 <div id="forecastChart" class="min-h-[400px]"></div>
 
-                <div class="mt-4 p-4 rounded-xl bg-sky-950/40 border border-sky-800/40 flex items-center justify-between">
-                    <span class="text-xs text-sky-300">Projected Infrastructure Budget for Selected Horizon:</span>
-                    <span id="forecastTotalBudget" class="text-base font-extrabold text-white font-mono">$0 USD</span>
+                <div class="mt-5 p-5 rounded-2xl bg-gradient-to-r from-sky-950/40 via-indigo-950/30 to-slate-900 border border-sky-800/50 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                            <i data-lucide="wallet" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-sky-300 font-semibold uppercase tracking-wider block">Projected Infrastructure Budget Commitment:</span>
+                            <span class="text-xs text-slate-400">Calculated across selected forecast horizon with active growth/discount assumptions</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span id="forecastTotalBudget" class="text-2xl font-extrabold text-white font-mono tracking-tight">$0 USD</span>
+                        <div class="text-[10px] text-emerald-400 font-mono font-semibold">95% Confidence Interval</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -305,20 +596,35 @@
         <section id="tab-optimization" class="tab-content p-8 space-y-6 hidden">
             <!-- Strategic Pillars Chart -->
             <div class="glass-panel p-6">
-                <h2 class="text-lg font-bold text-white mb-1">Annual Cost Reduction Portfolio by Strategic Pillar</h2>
-                <p class="text-xs text-slate-400 mb-4">Mapped directly to FinOps Foundation framework (Inform -> Optimize -> Operate)</p>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white tracking-tight">Annual Cost Reduction Portfolio by Strategic Pillar</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">FinOps Foundation framework alignment (Inform &bull; Optimize &bull; Operate)</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-800/50">
+                        Target: $1.2M+ Recovery
+                    </span>
+                </div>
                 <div id="optimizationPillarsChart" class="min-h-[280px]"></div>
             </div>
 
             <!-- Prioritized Action Matrix -->
             <div class="glass-panel p-6">
-                <h2 class="text-lg font-bold text-white mb-1">Prioritized Engineering Action Matrix</h2>
-                <p class="text-xs text-slate-400 mb-4">Actionable rightsizing, idle decommissioning, and commitment opportunities</p>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white tracking-tight">Prioritized Engineering Action Matrix</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">High-ROI rightsizing, idle decommissioning, and commitment reservation targets</p>
+                    </div>
+                    <button id="btnExportActions" type="button" class="self-start sm:self-auto px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/90 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 border border-slate-700/80 hover:border-emerald-500/50 transition-all flex items-center gap-1.5 active:scale-95 shadow-sm cursor-pointer" title="Export prioritized remediation recommendations as CSV">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Export Action Plan CSV</span>
+                    </button>
+                </div>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b border-slate-800 bg-slate-900/80 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                            <tr class="border-b border-slate-800 bg-slate-900/90 text-[11px] font-bold uppercase tracking-wider text-slate-400">
                                 <th class="py-3 px-4">Priority</th>
                                 <th class="py-3 px-4">Cost Center</th>
                                 <th class="py-3 px-4">Target Resource</th>
@@ -335,53 +641,321 @@
                 </div>
             </div>
 
-            <!-- Interactive Workload Calculator -->
-            <div class="glass-panel p-6">
-                <h2 class="text-lg font-bold text-white mb-1">🧮 Custom Workload Sizing & Rightsizing Simulator</h2>
-                <p class="text-xs text-slate-400 mb-4">Simulate new cloud cluster deployments or test downsized instance configurations</p>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">vCPU Cores</label>
-                        <input id="calcVcpu" type="number" min="1" max="256" value="32" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-mono text-white">
+            <!-- Executive Workload Sizing & Rightsizing Simulator (Financial Terminal) -->
+            <div class="financial-terminal">
+                <!-- Terminal Header Bar -->
+                <div class="terminal-header">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-rose-500/80 border border-rose-400/50"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-400/50"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500/80 border border-emerald-400/50"></span>
+                        </div>
+                        <span class="text-slate-600">|</span>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-4 h-4 text-sky-400"></i>
+                            <span class="text-xs font-extrabold text-white font-mono tracking-wider">FINOPS WORKLOAD ENGINE // REAL-TIME UNIT ECONOMICS TERMINAL</span>
+                        </div>
                     </div>
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">Memory (GB RAM)</label>
-                        <input id="calcRam" type="number" min="2" max="1024" value="128" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-mono text-white">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">Running Hours / Day</label>
-                        <input id="calcHours" type="number" min="1" max="24" value="24" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-mono text-white">
-                    </div>
-                    <div class="flex items-center pt-5">
-                        <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300 font-semibold select-none">
-                            <input id="calcDownsize" type="checkbox" checked class="rounded bg-slate-800 border-slate-700 text-sky-500">
-                            <span>Simulate 50% Rightsizing</span>
-                        </label>
+                    <div class="flex items-center gap-3 text-[11px] font-mono">
+                        <span class="text-slate-400">ENGINE: <span class="text-sky-400 font-semibold">SKU-CATALOG-v3.4</span></span>
+                        <span class="px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/50 font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            READY
+                        </span>
                     </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs">
-                    <div>
-                        <span class="text-slate-400">Hourly Rate:</span>
-                        <span id="calcHourly" class="font-mono font-bold text-white ml-1">$0.00</span>
+                <div class="p-6 space-y-6">
+                    <!-- Top Controls Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- Provider Selector -->
+                        <div class="terminal-input-group">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5 flex items-center gap-1.5">
+                                <i data-lucide="cloud" class="w-3.5 h-3.5 text-sky-400"></i>
+                                <span>Target Cloud Provider</span>
+                            </label>
+                            <select id="calcProvider" class="terminal-select">
+                                <option value="AWS" selected>Amazon Web Services (AWS)</option>
+                                <option value="Azure">Microsoft Azure</option>
+                                <option value="GCP">Google Cloud Platform (GCP)</option>
+                            </select>
+                        </div>
+
+                        <!-- Machine Family Selector -->
+                        <div class="terminal-input-group">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5 flex items-center gap-1.5">
+                                <i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                <span>Instance Family / Machine Type</span>
+                            </label>
+                            <select id="calcFamilySelect" class="terminal-select">
+                                <option value="m6i" selected>m6i (General Purpose - Intel Xeon)</option>
+                                <option value="m6g">m6g (AWS Graviton2 ARM - 20% Cheaper)</option>
+                                <option value="c6i">c6i (Compute Optimized - High Clock)</option>
+                                <option value="r6i">r6i (Memory Optimized - 8:1 Ratio)</option>
+                            </select>
+                        </div>
+
+                        <!-- Region Selector -->
+                        <div class="terminal-input-group">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5 flex items-center gap-1.5">
+                                <i data-lucide="globe" class="w-3.5 h-3.5 text-indigo-400"></i>
+                                <span>Deployment Region & Tariff</span>
+                            </label>
+                            <select id="calcRegion" class="terminal-select">
+                                <option value="us-east-1" selected>us-east-1 (US East - N. Virginia) [1.00x Base]</option>
+                                <option value="us-west-2">us-west-2 (US West - Oregon) [1.00x]</option>
+                                <option value="eu-central-1">eu-central-1 (Europe - Frankfurt) [1.18x Frankfurt Tax]</option>
+                                <option value="eu-west-1">eu-west-1 (Europe - Ireland) [1.10x Dublin]</option>
+                                <option value="ap-south-1">ap-south-1 (Asia Pacific - Mumbai) [1.09x Gateway]</option>
+                                <option value="ap-southeast-1">ap-southeast-1 (Asia Pacific - Singapore) [1.14x]</option>
+                                <option value="sa-east-1">sa-east-1 (South America - São Paulo) [1.34x Tariffs]</option>
+                            </select>
+                        </div>
+
+                        <!-- Downsizing Toggle -->
+                        <div class="terminal-input-group flex items-center justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">50% Rightsizing Downsizing</span>
+                                <span class="text-[10px] text-emerald-400 font-mono">Cut idle cores & overprovisioned RAM</span>
+                            </div>
+                            <label class="switch-container cursor-pointer">
+                                <input id="calcDownsize" type="checkbox" checked class="sr-only">
+                                <div class="custom-toggle"></div>
+                            </label>
+                        </div>
                     </div>
-                    <div>
-                        <span class="text-slate-400">Monthly Burn:</span>
-                        <span id="calcMonthly" class="font-mono font-bold text-sky-400 ml-1">$0.00</span>
+
+                    <!-- Hardware Specs Configuration Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- vCPU Cores -->
+                        <div class="terminal-input-group">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-sky-400"></i>
+                                    <span>vCPU Cores</span>
+                                </label>
+                                <span class="text-[10px] text-slate-500 font-mono">Range: 1-256</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="stepper-btn" onclick="document.getElementById('calcVcpu').stepDown(); document.getElementById('calcVcpu').dispatchEvent(new Event('input'))">-</button>
+                                <input id="calcVcpu" type="number" min="1" max="256" value="32" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-lg py-1.5 px-3 text-center text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
+                                <button type="button" class="stepper-btn" onclick="document.getElementById('calcVcpu').stepUp(); document.getElementById('calcVcpu').dispatchEvent(new Event('input'))">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Memory RAM -->
+                        <div class="terminal-input-group">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                    <i data-lucide="hard-drive" class="w-3.5 h-3.5 text-indigo-400"></i>
+                                    <span>Memory (GB RAM)</span>
+                                </label>
+                                <span class="text-[10px] text-slate-500 font-mono">Range: 2-1024</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="stepper-btn" onclick="document.getElementById('calcRam').value = Math.max(2, parseInt(document.getElementById('calcRam').value) - 16); document.getElementById('calcRam').dispatchEvent(new Event('input'))">-</button>
+                                <input id="calcRam" type="number" min="2" max="1024" value="128" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-lg py-1.5 px-3 text-center text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
+                                <button type="button" class="stepper-btn" onclick="document.getElementById('calcRam').value = Math.min(1024, parseInt(document.getElementById('calcRam').value) + 16); document.getElementById('calcRam').dispatchEvent(new Event('input'))">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Daily Running Hours -->
+                        <div class="terminal-input-group">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                    <span>Running Hours / Day</span>
+                                </label>
+                                <span class="text-[10px] text-slate-500 font-mono">1-24 hrs</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="stepper-btn" onclick="document.getElementById('calcHours').stepDown(); document.getElementById('calcHours').dispatchEvent(new Event('input'))">-</button>
+                                <input id="calcHours" type="number" min="1" max="24" value="24" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-lg py-1.5 px-3 text-center text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
+                                <button type="button" class="stepper-btn" onclick="document.getElementById('calcHours').stepUp(); document.getElementById('calcHours').dispatchEvent(new Event('input'))">+</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="px-3 py-1 rounded-lg bg-emerald-950/60 border border-emerald-800/60">
-                        <span class="text-emerald-400 font-semibold">Identified Downsizing Recovery:</span>
-                        <span id="calcSavings" class="font-mono font-bold text-emerald-300 ml-1">$0.00/mo</span>
+
+                    <!-- Calculate & Snapshot Action Buttons -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <button id="btnRunCalculate" type="button" class="sm:col-span-2 py-3 px-5 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold rounded-xl text-xs tracking-wider uppercase shadow-xl shadow-sky-500/25 flex items-center justify-center gap-2.5 transition-all active:scale-[0.99] border border-sky-400/30 cursor-pointer">
+                            <i data-lucide="calculator" class="w-4 h-4"></i>
+                            <span>Execute Real-Time Unit Economics Calculation</span>
+                        </button>
+                        <button id="btnSaveSnapshot" type="button" class="py-3 px-4 bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold rounded-xl text-xs border border-slate-700/80 hover:border-amber-500/50 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer" title="Save this scenario configuration for side-by-side comparison">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4 text-amber-400"></i>
+                            <span>Snapshot Scenario</span>
+                        </button>
+                    </div>
+
+                    <!-- Terminal Results Display Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                        <!-- Pod 1: Equivalent SKU -->
+                        <div class="terminal-metric-pod">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Target Instance SKU</span>
+                            <div id="calcSku" class="text-sm font-mono font-extrabold text-sky-400 truncate">m6i.8xlarge</div>
+                            <div id="calcFamily" class="text-[10px] text-slate-400 truncate mt-1">General Purpose Intel Ice Lake</div>
+                        </div>
+
+                        <!-- Pod 2: Hourly Rate -->
+                        <div class="terminal-metric-pod">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Unit Hourly Burn Rate</span>
+                            <div id="calcHourly" class="text-xl font-mono font-extrabold text-white tracking-tight">$0.00 /hr</div>
+                            <div class="text-[10px] text-slate-500 mt-1">Calculated per instance-hour</div>
+                        </div>
+
+                        <!-- Pod 3: Monthly Burn -->
+                        <div class="terminal-metric-pod">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Baseline Monthly Burn</span>
+                            <div id="calcMonthly" class="text-xl font-mono font-extrabold text-slate-200 tracking-tight">$0.00 /mo</div>
+                            <div class="text-[10px] text-slate-500 mt-1">30-day baseline consumption</div>
+                        </div>
+
+                        <!-- Pod 4: 50% Rightsizing Savings -->
+                        <div class="terminal-metric-pod highlight-savings">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1 flex items-center gap-1">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                <span>50% Rightsizing Recovery</span>
+                            </span>
+                            <div id="calcSavings" class="text-xl font-mono font-extrabold text-emerald-300 tracking-tight">$0.00/mo</div>
+                            <div id="calcAnnualSavings" class="text-[10px] font-mono text-emerald-400 font-semibold mt-1">
+                                +$0.00 /yr Projected ROI
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saved Scenarios Drawer -->
+                    <div id="simulationSnapshotsContainer" class="hidden pt-4 border-t border-slate-800/80 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-400"></i>
+                                <span>Saved Simulation Scenarios (<span id="snapshotCount">0</span>)</span>
+                            </span>
+                            <div class="flex items-center gap-3">
+                                <button id="btnCopyScenarioSummary" type="button" class="text-[11px] text-sky-400 hover:text-sky-300 font-semibold flex items-center gap-1 transition-colors cursor-pointer">
+                                    <i data-lucide="copy" class="w-3 h-3"></i> Copy Summary
+                                </button>
+                                <button id="btnClearSnapshots" type="button" class="text-[11px] text-slate-500 hover:text-rose-400 transition-colors cursor-pointer">
+                                    Clear Scenarios
+                                </button>
+                            </div>
+                        </div>
+                        <div id="simulationSnapshotsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <!-- Injected dynamically via JS -->
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Custom Scripts -->
-    <script src="/static/js/charts.js"></script>
-    <script src="/static/js/app.js"></script>
+    <!-- ================= ENTERPRISE AUTHENTICATION GATE ================= -->
+    <div id="authGate" class="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center p-4 overflow-y-auto">
+        <!-- Background subtle glow decoration -->
+        <div class="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
+            <div class="w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-3xl -translate-y-12"></div>
+            <div class="w-[450px] h-[450px] bg-indigo-500/10 rounded-full blur-3xl translate-x-32 translate-y-24"></div>
+        </div>
+
+        <div class="w-full max-w-md bg-slate-900/95 border border-slate-800 rounded-3xl p-8 shadow-2xl relative z-10 backdrop-blur-xl">
+            <!-- Brand Header -->
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-sky-400 via-blue-600 to-indigo-700 flex items-center justify-center shadow-xl shadow-sky-500/30 border border-sky-400/40 mb-3.5">
+                    <i data-lucide="cloud-lightning" class="w-7 h-7 text-white"></i>
+                </div>
+                <h2 class="text-xl font-black text-white tracking-tight">Abhi Cloud Tech</h2>
+                <div class="text-xs font-semibold text-sky-400 tracking-wider uppercase font-mono mt-0.5">FinOps Control Plane</div>
+                <p class="text-xs text-slate-400 mt-2">Sign in or create an account to access the enterprise cost intelligence platform.</p>
+            </div>
+
+            <!-- Tab Switcher: Sign In vs Sign Up -->
+            <div class="flex rounded-xl bg-slate-950/80 p-1 border border-slate-800 mb-5">
+                <button id="tabBtnSignIn" type="button" class="w-1/2 py-2 rounded-lg text-xs font-bold transition-all bg-sky-500/20 text-sky-300 border border-sky-500/30 shadow-sm cursor-pointer">
+                    Sign In
+                </button>
+                <button id="tabBtnSignUp" type="button" class="w-1/2 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all border border-transparent cursor-pointer">
+                    Sign Up
+                </button>
+            </div>
+
+            <!-- Dynamic Feedback Alert Message -->
+            <div id="authGateMsg" class="hidden mb-4 p-3 rounded-xl text-xs font-medium border flex items-center gap-2"></div>
+
+            <!-- 1. SIGN IN FORM -->
+            <form id="formSignIn" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-sky-400"></i>
+                        <span>User ID / Username</span>
+                    </label>
+                    <input id="loginUserId" type="text" placeholder="e.g. abhishek" autocomplete="username" required class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="lock" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span>Password</span>
+                    </label>
+                    <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" required class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                </div>
+
+                <button id="btnSubmitLogin" type="submit" class="w-full py-3 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold rounded-xl text-xs tracking-wider uppercase shadow-xl shadow-sky-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98] border border-sky-400/30 cursor-pointer mt-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span>Sign In to Control Plane</span>
+                </button>
+
+                <!-- Security Assurance -->
+                <div class="pt-2 text-center text-[11px] text-slate-400 font-mono flex items-center justify-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Enterprise PBKDF2-HMAC-SHA256 Protected</span>
+                </div>
+            </form>
+
+            <!-- 2. SIGN UP FORM -->
+            <form id="formSignUp" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="user-plus" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <span>Desired User ID</span>
+                    </label>
+                    <input id="signupUserId" type="text" placeholder="e.g. jdoe or clouddev" autocomplete="username" required minlength="3" maxlength="50" class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-sky-400"></i>
+                        <span>Full Name (Optional)</span>
+                    </label>
+                    <input id="signupFullName" type="text" placeholder="e.g. Abhishek Reddy" class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="lock" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span>Password (Minimum 8 Characters)</span>
+                    </label>
+                    <input id="signupPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8" class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                </div>
+
+                <button id="btnSubmitSignup" type="submit" class="w-full py-3 bg-gradient-to-r from-emerald-500 via-teal-600 to-sky-600 hover:from-emerald-400 hover:to-sky-500 text-white font-bold rounded-xl text-xs tracking-wider uppercase shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98] border border-emerald-400/30 cursor-pointer mt-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    <span>Create Account & Sign In</span>
+                </button>
+
+                <p class="text-[10px] text-slate-500 text-center font-mono pt-1">
+                    Credentials are encrypted with PBKDF2-SHA256 and stored in the SQLite database.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+    <!-- Custom Scripts with Anti-Cache Versioning -->
+    <script src="/static/js/charts.js?v=5.2"></script>
+    <script src="/static/js/app.js?v=5.2"></script>
     <script>
         lucide.createIcons();
     </script>

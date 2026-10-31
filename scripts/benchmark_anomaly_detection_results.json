@@ -1,0 +1,186 @@
+{
+  "Production Multi-Layer (IsoForest+Baseline+Rules)": {
+    "Model": "Production Multi-Layer (IsoForest+Baseline+Rules)",
+    "TP": 33,
+    "FP": 1276,
+    "FN": 570,
+    "TN": 30971,
+    "Precision": 0.0252,
+    "Recall": 0.0547,
+    "F1_Score": 0.0345,
+    "Specificity": 0.9604,
+    "FPR": 0.03957,
+    "ROC_AUC": 0.5013,
+    "Silhouette_Separation": 0.0346,
+    "Fit_Time_Sec": 6.024,
+    "Latency_Per_1000_ms": 60.4,
+    "Memory_MB": 45.0,
+    "Extra": {
+      "Architecture": "Ensemble 28d rolling median + IsolationForest + Domain heuristics"
+    }
+  },
+  "Standalone Isolation Forest": {
+    "Model": "Standalone Isolation Forest",
+    "TP": 492,
+    "FP": 111,
+    "FN": 111,
+    "TN": 32136,
+    "Precision": 0.8159,
+    "Recall": 0.8159,
+    "F1_Score": 0.8159,
+    "Specificity": 0.9966,
+    "FPR": 0.00344,
+    "ROC_AUC": 0.996,
+    "Silhouette_Separation": 0.7971,
+    "Fit_Time_Sec": 1.509,
+    "Latency_Per_1000_ms": 53.41,
+    "Memory_MB": 28.0,
+    "Extra": {
+      "n_estimators": 200,
+      "contamination": 0.018356164383561645
+    }
+  },
+  "Robust Elliptic Envelope (FastMCD)": {
+    "Model": "Robust Elliptic Envelope (FastMCD)",
+    "TP": 340,
+    "FP": 263,
+    "FN": 263,
+    "TN": 31984,
+    "Precision": 0.5638,
+    "Recall": 0.5638,
+    "F1_Score": 0.5638,
+    "Specificity": 0.9918,
+    "FPR": 0.00816,
+    "ROC_AUC": 0.9606,
+    "Silhouette_Separation": 0.8176,
+    "Fit_Time_Sec": 22.015,
+    "Latency_Per_1000_ms": 0.82,
+    "Memory_MB": 12.0,
+    "Extra": {
+      "Method": "Minimum Covariance Determinant"
+    }
+  },
+  "PCA Reconstruction Error (k=4)": {
+    "Model": "PCA Reconstruction Error (k=4)",
+    "TP": 341,
+    "FP": 262,
+    "FN": 262,
+    "TN": 31985,
+    "Precision": 0.5655,
+    "Recall": 0.5655,
+    "F1_Score": 0.5655,
+    "Specificity": 0.9919,
+    "FPR": 0.00812,
+    "ROC_AUC": 0.9249,
+    "Silhouette_Separation": 0.7487,
+    "Fit_Time_Sec": 0.009,
+    "Latency_Per_1000_ms": 0.9,
+    "Memory_MB": 8.0,
+    "Extra": {
+      "Explained_Variance": 0.9711678085951465
+    }
+  },
+  "Deep Autoencoder (MLP Reconstruction)": {
+    "Model": "Deep Autoencoder (MLP Reconstruction)",
+    "TP": 449,
+    "FP": 154,
+    "FN": 154,
+    "TN": 32093,
+    "Precision": 0.7446,
+    "Recall": 0.7446,
+    "F1_Score": 0.7446,
+    "Specificity": 0.9952,
+    "FPR": 0.00478,
+    "ROC_AUC": 0.9784,
+    "Silhouette_Separation": 0.7471,
+    "Fit_Time_Sec": 14.514,
+    "Latency_Per_1000_ms": 146.86,
+    "Memory_MB": 85.0,
+    "Extra": {
+      "Architecture": "8->16->8->3->8->16->8"
+    }
+  },
+  "Local Outlier Factor (k=25, Novelty)": {
+    "Model": "Local Outlier Factor (k=25, Novelty)",
+    "TP": 104,
+    "FP": 450,
+    "FN": 499,
+    "TN": 31797,
+    "Precision": 0.1877,
+    "Recall": 0.1725,
+    "F1_Score": 0.1798,
+    "Specificity": 0.986,
+    "FPR": 0.01395,
+    "ROC_AUC": 0.5758,
+    "Silhouette_Separation": 0.4837,
+    "Fit_Time_Sec": 2.912,
+    "Latency_Per_1000_ms": 75.06,
+    "Memory_MB": 120.0,
+    "Extra": {
+      "n_neighbors": 25
+    }
+  },
+  "One-Class SVM (RBF Kernel, nu=0.018)": {
+    "Model": "One-Class SVM (RBF Kernel, nu=0.018)",
+    "TP": 404,
+    "FP": 219,
+    "FN": 199,
+    "TN": 32028,
+    "Precision": 0.6485,
+    "Recall": 0.67,
+    "F1_Score": 0.6591,
+    "Specificity": 0.9932,
+    "FPR": 0.00679,
+    "ROC_AUC": 0.9722,
+    "Silhouette_Separation": 0.7804,
+    "Fit_Time_Sec": 0.312,
+    "Latency_Per_1000_ms": 40.51,
+    "Memory_MB": 180.0,
+    "Extra": {
+      "Kernel": "RBF",
+      "nu": 0.018356164383561645,
+      "fit_samples": 8000
+    }
+  },
+  "Extended Isolation Forest (Random Hyperplanes)": {
+    "Model": "Extended Isolation Forest (Random Hyperplanes)",
+    "TP": 466,
+    "FP": 137,
+    "FN": 137,
+    "TN": 32110,
+    "Precision": 0.7728,
+    "Recall": 0.7728,
+    "F1_Score": 0.7728,
+    "Specificity": 0.9958,
+    "FPR": 0.00425,
+    "ROC_AUC": 0.9963,
+    "Silhouette_Separation": 0.8137,
+    "Fit_Time_Sec": 1.764,
+    "Latency_Per_1000_ms": 69.44,
+    "Memory_MB": 38.0,
+    "Extra": {
+      "Projection_Dim": 16,
+      "Ensemble_Trees": 200
+    }
+  },
+  "STL Residual + Hierarchical MAD Baseline": {
+    "Model": "STL Residual + Hierarchical MAD Baseline",
+    "TP": 603,
+    "FP": 874,
+    "FN": 0,
+    "TN": 31373,
+    "Precision": 0.4083,
+    "Recall": 1.0,
+    "F1_Score": 0.5798,
+    "Specificity": 0.9729,
+    "FPR": 0.0271,
+    "ROC_AUC": 0.9725,
+    "Silhouette_Separation": 0.6522,
+    "Fit_Time_Sec": 0.001,
+    "Latency_Per_1000_ms": 0.85,
+    "Memory_MB": 5.0,
+    "Extra": {
+      "Threshold": "Z > 2.8 or Ratio > 1.7"
+    }
+  }
+}
