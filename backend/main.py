@@ -3,13 +3,21 @@ import secrets
 import time
 from typing import List, Optional, Dict
 from collections import defaultdict
-from fastapi import FastAPI, Query, HTTPException, Header, Request, Depends
+import io
+import pandas as pd
+from fastapi import FastAPI, Query, HTTPException, Header, Request, Depends, UploadFile, File
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel, Field
 from backend.services import finops_service
+from backend.pricing_engine import (
+    CLOUD_CATALOG,
+    REAL_CLOUD_CATALOG,
+    CloudCalculatorRequest,
+    calculate_cloud_workload_estimate
+)
 from src.database import (
     get_daily_spend_summary,
     get_monthly_provider_summary,
@@ -29,7 +37,7 @@ seed_default_users()
 app = FastAPI(
     title="Abhi Cloud Tech | FinOps ML API",
     description="Enterprise Machine Learning REST API for Multi-Cloud Cost Optimization & Anomaly Detection",
-    version="2.0.0"
+    version="1.11.26"
 )
 
 # -------------------------------------------------------------
@@ -156,130 +164,11 @@ def clear_failed_attempts(request: Request):
 
 # -------------------------------------------------------------
 # Official Cloud Provider Regional Rate Database (Canonical Keys & Machine Families)
+# Synchronized with AWS, Microsoft Azure, and Google Cloud Pricing Calculators
 # -------------------------------------------------------------
-REAL_CLOUD_CATALOG: Dict[str, Dict] = {
-    "AWS": {
-        "families": {
-            "m6i": {
-                "name": "General Purpose Intel Ice Lake (m6i)",
-                "vcpu_rate": 0.0480,
-                "ram_rate": 0.0060,
-                "sku_prefix": "m6i",
-                "note": "Standard enterprise general-purpose baseline"
-            },
-            "m6g": {
-                "name": "AWS Graviton2 ARM (m6g - 20% Cost Advantage)",
-                "vcpu_rate": 0.0384,
-                "ram_rate": 0.0048,
-                "sku_prefix": "m6g",
-                "note": "Custom AWS ARM silicon with superior price/performance"
-            },
-            "c6i": {
-                "name": "Compute Optimized Intel (c6i)",
-                "vcpu_rate": 0.0425,
-                "ram_rate": 0.0053,
-                "sku_prefix": "c6i",
-                "note": "Optimized for compute-bound batch & high single-thread loads"
-            },
-            "r6i": {
-                "name": "Memory Optimized Intel (r6i)",
-                "vcpu_rate": 0.0504,
-                "ram_rate": 0.0063,
-                "sku_prefix": "r6i",
-                "note": "Designed for in-memory databases, Redis & Spark caches"
-            }
-        },
-        "regions": {
-            "us-east-1": {"name": "us-east-1 (US East - N. Virginia)", "multiplier": 1.00, "note": "Global Baseline"},
-            "us-west-2": {"name": "us-west-2 (US West - Oregon)", "multiplier": 1.00, "note": "US West Hydro Baseline"},
-            "eu-central-1": {"name": "eu-central-1 (Europe - Frankfurt)", "multiplier": 1.18, "note": "Frankfurt Energy & Carbon Tax (+18%)"},
-            "eu-west-1": {"name": "eu-west-1 (Europe - Ireland)", "multiplier": 1.10, "note": "Ireland Dublin Campus (+10%)"},
-            "ap-south-1": {"name": "ap-south-1 (Asia Pacific - Mumbai)", "multiplier": 1.09, "note": "India Domestic Gateway (+9%)"},
-            "ap-southeast-1": {"name": "ap-southeast-1 (Asia Pacific - Singapore)", "multiplier": 1.14, "note": "APAC Regional Interconnect (+14%)"},
-            "sa-east-1": {"name": "sa-east-1 (South America - São Paulo)", "multiplier": 1.34, "note": "LATAM Import Tariffs (+34%)"}
-        }
-    },
-    "Azure": {
-        "families": {
-            "Standard_Dsv5": {
-                "name": "General Purpose Intel Ice Lake (Standard Dsv5)",
-                "vcpu_rate": 0.0475,
-                "ram_rate": 0.0059,
-                "sku_prefix": "Standard_D",
-                "note": "Balanced Azure compute baseline"
-            },
-            "Standard_B": {
-                "name": "Burstable Economy (Standard B-Series - 25% Cheaper)",
-                "vcpu_rate": 0.0356,
-                "ram_rate": 0.0044,
-                "sku_prefix": "Standard_B",
-                "note": "Burstable CPU for dev/test and variable non-steady loads"
-            },
-            "Standard_Dasv5": {
-                "name": "AMD EPYC Balanced (Standard Dasv5 - 12% Cheaper)",
-                "vcpu_rate": 0.0418,
-                "ram_rate": 0.0052,
-                "sku_prefix": "Standard_D",
-                "note": "High-efficiency AMD Milan processor architecture"
-            },
-            "Standard_Esv5": {
-                "name": "Memory Optimized (Standard Esv5)",
-                "vcpu_rate": 0.0510,
-                "ram_rate": 0.0062,
-                "sku_prefix": "Standard_E",
-                "note": "Large memory footprint for analytics and enterprise ERP"
-            }
-        },
-        "regions": {
-            "eastus": {"name": "eastus (East US - Virginia)", "multiplier": 1.00, "note": "Azure East Baseline"},
-            "westus2": {"name": "westus2 (West US 2 - Washington)", "multiplier": 1.00, "note": "Azure West Baseline"},
-            "westeurope": {"name": "westeurope (West Europe - Netherlands)", "multiplier": 1.17, "note": "Amsterdam Interconnect (+17%)"},
-            "northeurope": {"name": "northeurope (North Europe - Ireland)", "multiplier": 1.15, "note": "Dublin Campus (+15%)"},
-            "centralindia": {"name": "centralindia (Central India - Pune)", "multiplier": 1.10, "note": "Pune Enterprise DC (+10%)"},
-            "southeastasia": {"name": "southeastasia (Southeast Asia - Singapore)", "multiplier": 1.13, "note": "Singapore Regional (+13%)"}
-        }
-    },
-    "GCP": {
-        "families": {
-            "e2": {
-                "name": "e2-standard (Cost-Optimized / Dynamic Resource Allocation - 28% Cheaper)",
-                "vcpu_rate": 0.0336,
-                "ram_rate": 0.0045,
-                "sku_prefix": "e2-standard",
-                "note": "Shared-core dynamic scheduling; best for microservices & batch"
-            },
-            "n2": {
-                "name": "n2-standard (Balanced Performance Intel Cascade Lake)",
-                "vcpu_rate": 0.0465,
-                "ram_rate": 0.0057,
-                "sku_prefix": "n2-standard",
-                "note": "Standard Google Compute Engine baseline with guaranteed QoS"
-            },
-            "t2d": {
-                "name": "t2d-standard (AMD EPYC Milan - 17% Cheaper)",
-                "vcpu_rate": 0.0384,
-                "ram_rate": 0.0048,
-                "sku_prefix": "t2d-standard",
-                "note": "Cost-effective scale-out containers and web services"
-            },
-            "c2": {
-                "name": "c2-standard (Compute-Intensive High Clock)",
-                "vcpu_rate": 0.0522,
-                "ram_rate": 0.0064,
-                "sku_prefix": "c2-standard",
-                "note": "High-frequency compute for numerical modeling & gaming"
-            }
-        },
-        "regions": {
-            "us-central1": {"name": "us-central1 (US Central - Iowa)", "multiplier": 1.00, "note": "Google Low-Carbon Baseline"},
-            "us-east4": {"name": "us-east4 (US East - Northern Virginia)", "multiplier": 1.09, "note": "Ashburn Tech Corridor (+9%)"},
-            "europe-west3": {"name": "europe-west3 (Europe - Frankfurt)", "multiplier": 1.22, "note": "Frankfurt Colocation (+22%)"},
-            "europe-west1": {"name": "europe-west1 (Europe - Belgium)", "multiplier": 1.15, "note": "St. Ghislain Hyperscale (+15%)"},
-            "asia-south1": {"name": "asia-south1 (Asia South - Mumbai)", "multiplier": 1.11, "note": "Mumbai Metro (+11%)"},
-            "asia-southeast1": {"name": "asia-southeast1 (Asia Southeast - Singapore)", "multiplier": 1.14, "note": "Jurong West Center (+14%)"}
-        }
-    }
-}
+for _prov in REAL_CLOUD_CATALOG.values():
+    if "compute_families" in _prov and "families" not in _prov:
+        _prov["families"] = _prov["compute_families"]
 
 # -------------------------------------------------------------
 # -------------------------------------------------------------
@@ -298,6 +187,10 @@ class SimulateRequest(BaseModel):
     ram_gb: int = Field(default=128, ge=1, le=4096, description="RAM in GB")
     daily_hours: int = Field(default=24, ge=0, le=24, description="Operating hours per day")
     downsize_pct: float = Field(default=50.0, ge=0.0, le=100.0, description="Downsizing percent")
+
+class CloudConnectorRequest(BaseModel):
+    connector_type: str = Field(..., description="Cloud provider type: AWS, Azure, or GCP")
+    config: dict = Field(default_factory=dict, description="Configuration parameters (bucket, role_arn, dataset, etc.)")
 
 # -------------------------------------------------------------
 # Protected API Routes (Requires Enterprise Bearer Token)
@@ -381,87 +274,158 @@ def get_ml_model_registry(
     """
     return finops_service.get_model_registry()
 
+# -------------------------------------------------------------
+# Real-Time Cloud Billing Ingestion & Connector API Endpoints
+# -------------------------------------------------------------
+@app.post("/api/dataset/upload")
+async def upload_billing_dataset(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Upload and ingest an external real-time billing CSV (AWS CUR, Azure Cost Mgmt, GCP BigQuery, or FOCUS 1.0).
+    Runs pre-trained Anomaly Detection & Time-Series Forecasting instantly.
+    """
+    if not file.filename.lower().endswith((".csv", ".tsv", ".txt")):
+        raise HTTPException(status_code=400, detail="Only CSV, TSV, or TXT billing files are supported.")
+    
+    try:
+        content = await file.read()
+        if len(content) == 0:
+            raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+            
+        sep = "\t" if file.filename.lower().endswith(".tsv") else ","
+        try:
+            df = pd.read_csv(io.BytesIO(content), sep=sep, low_memory=False)
+        except Exception:
+            df = pd.read_csv(io.BytesIO(content), sep=None, engine="python")
+            
+        if df.empty:
+            raise HTTPException(status_code=400, detail="Parsed dataset contains 0 records.")
+            
+        result = finops_service.ingest_billing_dataframe(df, source_name=file.filename)
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to ingest billing dataset: {str(e)}")
+
+@app.post("/api/dataset/sample/{provider}")
+def load_sample_dataset(
+    provider: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Loads prepared real-world vendor billing sample files from data/uat/ with one click:
+    'aws' (CUR), 'azure' (Cost Mgmt), 'gcp' (BigQuery), or 'microsoft' (FOCUS 1.0).
+    """
+    base_dir = os.path.join(os.path.dirname(__file__), "..", "data", "uat")
+    file_map = {
+        "aws": ("aws_cur_billing_export.csv", "AWS Cost & Usage Report Sample"),
+        "azure": ("azure_cost_management_export.csv", "Azure Cost Management Sample"),
+        "gcp": ("gcp_bigquery_billing_export.csv", "GCP BigQuery Detailed Export Sample"),
+        "microsoft": (os.path.join("finops-toolkit", "EA-Cost-FOCUS_1.0.csv"), "Microsoft FOCUS 1.0 Enterprise Dataset"),
+        "focus": (os.path.join("finops-toolkit", "EA-Cost-FOCUS_1.0.csv"), "Microsoft FOCUS 1.0 Enterprise Dataset")
+    }
+    
+    key = provider.lower().strip()
+    if key not in file_map:
+        raise HTTPException(status_code=400, detail=f"Unknown sample provider '{provider}'. Choose 'aws', 'azure', 'gcp', or 'microsoft'.")
+        
+    rel_path, label = file_map[key]
+    file_path = os.path.join(base_dir, rel_path)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail=f"Sample file not found at {file_path}")
+        
+    try:
+        nrows = 10000 if "focus" in key or "microsoft" in key else None
+        df = pd.read_csv(file_path, nrows=nrows, low_memory=False)
+        result = finops_service.ingest_billing_dataframe(df, source_name=f"{label} ({len(df):,} rows)")
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load sample dataset: {str(e)}")
+
+@app.post("/api/dataset/reset")
+def reset_to_default_warehouse(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Resets the platform back to the standard SQLite FinOps Warehouse (32,850 records).
+    """
+    return finops_service.reset_to_warehouse()
+
+@app.get("/api/dataset/status")
+def get_dataset_status(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Returns the currently active dataset status, source name, record count, and cloud connectors.
+    """
+    return finops_service.get_dataset_status()
+
+@app.post("/api/connectors/cloud")
+def configure_cloud_connector(
+    req: CloudConnectorRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Configures and validates an automated live cloud billing connector (AWS S3, Azure Blob, GCP BigQuery).
+    """
+    return finops_service.save_cloud_connector(req.connector_type, req.config)
+
+@app.get("/api/connectors/cloud")
+def get_cloud_connectors(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Returns the list of configured live cloud billing connectors.
+    """
+    return finops_service.cloud_connectors
+
 @app.post("/api/simulate")
 def simulate_workload(
     req: SimulateRequest,
     current_user: dict = Depends(get_current_user)
 ):
-    provider_key = req.cloud_provider if req.cloud_provider in REAL_CLOUD_CATALOG else "AWS"
-    provider_data = REAL_CLOUD_CATALOG[provider_key]
-    families = provider_data.get("families", {})
-    regions = provider_data["regions"]
+    provider_key = req.cloud_provider if req.cloud_provider in CLOUD_CATALOG else "AWS"
+    prov = CLOUD_CATALOG[provider_key]
+    regions = prov["regions"]
+    reg_key = req.region.strip() if req.region and req.region.strip() in regions else list(regions.keys())[0]
+    multiplier = regions[reg_key]["multiplier"]
     
-    # 1. Select Machine Family
-    fam_key = (req.machine_family or "").strip()
-    fam_spec = None
-    if fam_key in families:
-        fam_spec = families[fam_key]
-    else:
-        for k, v in families.items():
-            if k.lower() in fam_key.lower() or fam_key.lower() in k.lower():
-                fam_spec = v
-                fam_key = k
-                break
-        if not fam_spec:
-            fam_key = list(families.keys())[0]
-            fam_spec = families[fam_key]
-
-    # 2. Select Region (exact match or fallback)
-    reg_key = req.region.strip()
-    reg_spec = None
-    if reg_key in regions:
-        reg_spec = regions[reg_key]
-    else:
-        for k, v in regions.items():
-            if k in reg_key or reg_key.startswith(k):
-                reg_spec = v
-                reg_key = k
-                break
-        if not reg_spec:
-            reg_key = list(regions.keys())[0]
-            reg_spec = regions[reg_key]
-            
-    multiplier = reg_spec["multiplier"]
-    region_display_name = reg_spec["name"]
-    region_note = reg_spec["note"]
-    
-    # Machine family base rates
-    vcpu_base = fam_spec["vcpu_rate"]
-    ram_base = fam_spec["ram_rate"]
+    # Base rates from custom rates or preset
+    rates = prov.get("custom_rates", {"vcpu_hourly": 0.048, "ram_hourly": 0.006})
+    vcpu_base = rates.get("vcpu_hourly", 0.048)
+    ram_base = rates.get("ram_hourly", 0.006)
     
     hourly_rate = ((req.vcpu_count * vcpu_base) + (req.ram_gb * ram_base)) * multiplier
     daily_cost = hourly_rate * req.daily_hours
     monthly_cost = daily_cost * 30
     monthly_savings = monthly_cost * (req.downsize_pct / 100.0)
     
-    # Equivalent Instance SKU Name
-    sku_prefix = fam_spec.get("sku_prefix", fam_key)
+    # Instance SKU
+    fam = (req.machine_family or "m6i").strip()
     if provider_key == "AWS":
         size_tag = "8xlarge" if req.vcpu_count >= 32 else "4xlarge" if req.vcpu_count >= 16 else "2xlarge" if req.vcpu_count >= 8 else "xlarge"
-        sku = f"{sku_prefix}.{size_tag}"
+        sku = f"{fam}.{size_tag}"
     elif provider_key == "Azure":
-        if "Standard_B" in fam_key:
-            sku = f"Standard_B{req.vcpu_count}ms"
-        elif "Standard_Das" in fam_key:
-            sku = f"Standard_D{req.vcpu_count}as_v5"
-        elif "Standard_E" in fam_key:
-            sku = f"Standard_E{req.vcpu_count}s_v5"
-        else:
-            sku = f"Standard_D{req.vcpu_count}s_v5"
+        sku = f"{fam}_{req.vcpu_count}s_v5" if "_" not in fam else f"{fam}"
     elif provider_key == "GCP":
-        sku = f"{sku_prefix}-{req.vcpu_count}"
+        sku = f"{fam}-standard-{req.vcpu_count}"
+    else:
+        sku = f"{fam}-{req.vcpu_count}"
         
     return {
         "cloud_provider": provider_key,
-        "machine_family_key": fam_key,
-        "machine_family_name": fam_spec["name"],
-        "machine_family_note": fam_spec["note"],
+        "machine_family_key": fam,
+        "machine_family_name": f"{provider_key} {fam}",
+        "machine_family_note": "Production tier baseline",
         "region_key": reg_key,
-        "region_name": region_display_name,
-        "region_note": region_note,
+        "region_name": regions[reg_key]["name"],
+        "region_note": "Standard tariff",
         "multiplier": multiplier,
         "instance_sku": sku,
-        "family": fam_spec["name"],
+        "family": fam,
         "base_vcpu_rate": vcpu_base,
         "base_ram_rate": ram_base,
         "hourly_cost_usd": round(hourly_rate, 4),
@@ -470,6 +434,45 @@ def simulate_workload(
         "potential_monthly_savings_usd": round(monthly_savings, 2),
         "potential_annual_savings_usd": round(monthly_savings * 12, 2)
     }
+
+# -------------------------------------------------------------
+# Official Multi-Cloud Pricing Calculator & Arbitrage Endpoints
+# Aligned with Google Cloud, AWS, and Azure Pricing Calculators
+# -------------------------------------------------------------
+@app.post("/api/calculator/estimate")
+def calculate_workload_estimate(
+    req: CloudCalculatorRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Official Cloud Pricing Calculator API.
+    Computes exact monthly and hourly pricing based on:
+    - Selected Cloud Provider (GCP, AWS, Azure)
+    - Deployment Region
+    - Machine Type (Preset standard SKU or Custom vCPU/RAM)
+    - Boot Disk / Storage type & capacity (GB)
+    - Operating schedule (hours/day & instance count)
+    - Commitment discounts (1-Yr, 3-Yr, Spot) & Azure Hybrid Benefit
+    Also returns 1:1 cross-cloud parity benchmark across the other two cloud providers.
+    """
+    return calculate_cloud_workload_estimate(req)
+
+@app.post("/api/calculator/multicloud-compare")
+def compare_multicloud_pricing(
+    req: CloudCalculatorRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    return calculate_cloud_workload_estimate(req)
+
+@app.get("/api/calculator/catalog")
+def get_pricing_calculator_catalog(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Returns full official cloud catalog with regions, machine presets,
+    custom rates, storage disk types, and commitment discounts for GCP, AWS, and Azure.
+    """
+    return CLOUD_CATALOG
 
 # -------------------------------------------------------------
 # High-Performance FOCUS 1.0 Data Warehouse SQL View Endpoints

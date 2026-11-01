@@ -1,0 +1,411 @@
+{
+  "timestamp": "2026-11-01T12:36:32.835614",
+  "providers": {
+    "AWS": {
+      "anomaly_detection": {
+        "provider": "AWS",
+        "input_rows": 5000,
+        "status": "PASS",
+        "anomalies_detected": 916,
+        "severity_breakdown": {
+          "HIGH": 352,
+          "MEDIUM": 346,
+          "CRITICAL": 218
+        },
+        "total_waste_usd": 278500.84,
+        "root_cause_breakdown": {
+          "Unbudgeted Cost Surge: Spend exceeded statistical upper threshold": 798,
+          "Zombie/Idle Cluster: High compute allocation with <15% utilization": 64,
+          "Storage Sprawl: Orphan snapshots or unattached high-performance disks": 41,
+          "Runaway Egress Spike: Massive outbound data transfer detected": 13
+        },
+        "errors": []
+      },
+      "forecasting": {
+        "provider": "AWS",
+        "input_rows": 5000,
+        "status": "PASS",
+        "forecast_days": 60,
+        "metrics": {
+          "MAE_USD": 1357.91,
+          "RMSE_USD": 1711.6,
+          "MAPE_Pct": 53.95,
+          "Test_Sample_Count": 55,
+          "Mean_Daily_Spend_USD": 3542.93,
+          "Quantile_Crossing_Violations": 0,
+          "Empirical_Coverage_Pct": 80.0,
+          "Upper_Pinball_Loss": 183.9,
+          "Lower_Pinball_Loss": 136.48,
+          "mae": 1357.91,
+          "rmse": 1711.6,
+          "mape": 53.95,
+          "pinball_loss_mean": 160.19,
+          "quantile_crossing_violations": 0
+        },
+        "quantile_violations": 0,
+        "forecast_sample": [
+          {
+            "Date": "2026-01-01",
+            "Forecasted_Spend_USD": 4906.49,
+            "Predicted_Spend_USD": 4906.49,
+            "Upper_Bound_95_USD": 8540.32,
+            "UpperBound_Spend_USD": 8540.32,
+            "Lower_Bound_95_USD": 1863.84,
+            "LowerBound_Spend_USD": 1863.84,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-02",
+            "Forecasted_Spend_USD": 4748.64,
+            "Predicted_Spend_USD": 4748.64,
+            "Upper_Bound_95_USD": 5738.84,
+            "UpperBound_Spend_USD": 5738.84,
+            "Lower_Bound_95_USD": 2275.85,
+            "LowerBound_Spend_USD": 2275.85,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-03",
+            "Forecasted_Spend_USD": 4199.4,
+            "Predicted_Spend_USD": 4199.4,
+            "Upper_Bound_95_USD": 6575.96,
+            "UpperBound_Spend_USD": 6575.96,
+            "Lower_Bound_95_USD": 1879.73,
+            "LowerBound_Spend_USD": 1879.73,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-04",
+            "Forecasted_Spend_USD": 4697.3,
+            "Predicted_Spend_USD": 4697.3,
+            "Upper_Bound_95_USD": 5505.83,
+            "UpperBound_Spend_USD": 5505.83,
+            "Lower_Bound_95_USD": 1792.48,
+            "LowerBound_Spend_USD": 1792.48,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-05",
+            "Forecasted_Spend_USD": 3334.35,
+            "Predicted_Spend_USD": 3334.35,
+            "Upper_Bound_95_USD": 5083.87,
+            "UpperBound_Spend_USD": 5083.87,
+            "Lower_Bound_95_USD": 2031.93,
+            "LowerBound_Spend_USD": 2031.93,
+            "Is_Forecast": 1
+          }
+        ],
+        "errors": []
+      }
+    },
+    "Azure": {
+      "anomaly_detection": {
+        "provider": "Azure",
+        "input_rows": 5000,
+        "status": "PASS",
+        "anomalies_detected": 799,
+        "severity_breakdown": {
+          "MEDIUM": 341,
+          "HIGH": 303,
+          "CRITICAL": 155
+        },
+        "total_waste_usd": 273415.47,
+        "root_cause_breakdown": {
+          "Unbudgeted Cost Surge: Spend exceeded statistical upper threshold": 642,
+          "Zombie/Idle Cluster: High compute allocation with <15% utilization": 88,
+          "Storage Sprawl: Orphan snapshots or unattached high-performance disks": 45,
+          "Runaway Egress Spike: Massive outbound data transfer detected": 24
+        },
+        "errors": []
+      },
+      "forecasting": {
+        "provider": "Azure",
+        "input_rows": 5000,
+        "status": "PASS",
+        "forecast_days": 60,
+        "metrics": {
+          "MAE_USD": 1284.48,
+          "RMSE_USD": 1723.1,
+          "MAPE_Pct": 42.57,
+          "Test_Sample_Count": 55,
+          "Mean_Daily_Spend_USD": 3466.63,
+          "Quantile_Crossing_Violations": 0,
+          "Empirical_Coverage_Pct": 78.18,
+          "Upper_Pinball_Loss": 240.38,
+          "Lower_Pinball_Loss": 138.7,
+          "mae": 1284.48,
+          "rmse": 1723.1,
+          "mape": 42.57,
+          "pinball_loss_mean": 189.54,
+          "quantile_crossing_violations": 0
+        },
+        "quantile_violations": 0,
+        "forecast_sample": [
+          {
+            "Date": "2026-01-01",
+            "Forecasted_Spend_USD": 3171.99,
+            "Predicted_Spend_USD": 3171.99,
+            "Upper_Bound_95_USD": 5322.4,
+            "UpperBound_Spend_USD": 5322.4,
+            "Lower_Bound_95_USD": 1848.93,
+            "LowerBound_Spend_USD": 1848.93,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-02",
+            "Forecasted_Spend_USD": 3052.46,
+            "Predicted_Spend_USD": 3052.46,
+            "Upper_Bound_95_USD": 4739.65,
+            "UpperBound_Spend_USD": 4739.65,
+            "Lower_Bound_95_USD": 1918.73,
+            "LowerBound_Spend_USD": 1918.73,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-03",
+            "Forecasted_Spend_USD": 3867.46,
+            "Predicted_Spend_USD": 3867.46,
+            "Upper_Bound_95_USD": 4981.34,
+            "UpperBound_Spend_USD": 4981.34,
+            "Lower_Bound_95_USD": 1736.14,
+            "LowerBound_Spend_USD": 1736.14,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-04",
+            "Forecasted_Spend_USD": 2674.03,
+            "Predicted_Spend_USD": 2674.03,
+            "Upper_Bound_95_USD": 5148.54,
+            "UpperBound_Spend_USD": 5148.54,
+            "Lower_Bound_95_USD": 1702.26,
+            "LowerBound_Spend_USD": 1702.26,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-05",
+            "Forecasted_Spend_USD": 3413.51,
+            "Predicted_Spend_USD": 3413.51,
+            "Upper_Bound_95_USD": 5523.62,
+            "UpperBound_Spend_USD": 5523.62,
+            "Lower_Bound_95_USD": 1912.19,
+            "LowerBound_Spend_USD": 1912.19,
+            "Is_Forecast": 1
+          }
+        ],
+        "errors": []
+      }
+    },
+    "GCP": {
+      "anomaly_detection": {
+        "provider": "GCP",
+        "input_rows": 5000,
+        "status": "PASS",
+        "anomalies_detected": 962,
+        "severity_breakdown": {
+          "MEDIUM": 520,
+          "HIGH": 265,
+          "CRITICAL": 177
+        },
+        "total_waste_usd": 257856.81,
+        "root_cause_breakdown": {
+          "Unbudgeted Cost Surge: Spend exceeded statistical upper threshold": 457,
+          "Zombie/Idle Cluster: High compute allocation with <15% utilization": 444,
+          "Runaway Egress Spike: Massive outbound data transfer detected": 32,
+          "Storage Sprawl: Orphan snapshots or unattached high-performance disks": 29
+        },
+        "errors": []
+      },
+      "forecasting": {
+        "provider": "GCP",
+        "input_rows": 5000,
+        "status": "PASS",
+        "forecast_days": 60,
+        "metrics": {
+          "MAE_USD": 1338.88,
+          "RMSE_USD": 1825.19,
+          "MAPE_Pct": 41.52,
+          "Test_Sample_Count": 55,
+          "Mean_Daily_Spend_USD": 3435.33,
+          "Quantile_Crossing_Violations": 0,
+          "Empirical_Coverage_Pct": 74.55,
+          "Upper_Pinball_Loss": 310.61,
+          "Lower_Pinball_Loss": 119.38,
+          "mae": 1338.88,
+          "rmse": 1825.19,
+          "mape": 41.52,
+          "pinball_loss_mean": 214.995,
+          "quantile_crossing_violations": 0
+        },
+        "quantile_violations": 0,
+        "forecast_sample": [
+          {
+            "Date": "2026-01-01",
+            "Forecasted_Spend_USD": 3536.48,
+            "Predicted_Spend_USD": 3536.48,
+            "Upper_Bound_95_USD": 5347.39,
+            "UpperBound_Spend_USD": 5347.39,
+            "Lower_Bound_95_USD": 1562.23,
+            "LowerBound_Spend_USD": 1562.23,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-02",
+            "Forecasted_Spend_USD": 3270.49,
+            "Predicted_Spend_USD": 3270.49,
+            "Upper_Bound_95_USD": 5445.14,
+            "UpperBound_Spend_USD": 5445.14,
+            "Lower_Bound_95_USD": 1440.34,
+            "LowerBound_Spend_USD": 1440.34,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-03",
+            "Forecasted_Spend_USD": 3619.04,
+            "Predicted_Spend_USD": 3619.04,
+            "Upper_Bound_95_USD": 5733.83,
+            "UpperBound_Spend_USD": 5733.83,
+            "Lower_Bound_95_USD": 1617.23,
+            "LowerBound_Spend_USD": 1617.23,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-04",
+            "Forecasted_Spend_USD": 3500.47,
+            "Predicted_Spend_USD": 3500.47,
+            "Upper_Bound_95_USD": 6068.78,
+            "UpperBound_Spend_USD": 6068.78,
+            "Lower_Bound_95_USD": 1911.98,
+            "LowerBound_Spend_USD": 1911.98,
+            "Is_Forecast": 1
+          },
+          {
+            "Date": "2026-01-05",
+            "Forecasted_Spend_USD": 3822.68,
+            "Predicted_Spend_USD": 3822.68,
+            "Upper_Bound_95_USD": 6230.87,
+            "UpperBound_Spend_USD": 6230.87,
+            "Lower_Bound_95_USD": 1809.91,
+            "LowerBound_Spend_USD": 1809.91,
+            "Is_Forecast": 1
+          }
+        ],
+        "errors": []
+      }
+    }
+  },
+  "combined": {
+    "total_rows": 15000,
+    "anomaly_detection": {
+      "provider": "Multi-Cloud Combined",
+      "input_rows": 15000,
+      "status": "PASS",
+      "anomalies_detected": 2677,
+      "severity_breakdown": {
+        "MEDIUM": 1207,
+        "HIGH": 920,
+        "CRITICAL": 550
+      },
+      "total_waste_usd": 809773.12,
+      "root_cause_breakdown": {
+        "Unbudgeted Cost Surge: Spend exceeded statistical upper threshold": 1897,
+        "Zombie/Idle Cluster: High compute allocation with <15% utilization": 596,
+        "Storage Sprawl: Orphan snapshots or unattached high-performance disks": 115,
+        "Runaway Egress Spike: Massive outbound data transfer detected": 69
+      },
+      "errors": []
+    },
+    "forecasting": {
+      "provider": "Multi-Cloud Combined",
+      "input_rows": 15000,
+      "status": "PASS",
+      "forecast_days": 60,
+      "metrics": {
+        "MAE_USD": 2455.13,
+        "RMSE_USD": 3035.98,
+        "MAPE_Pct": 24.28,
+        "Test_Sample_Count": 55,
+        "Mean_Daily_Spend_USD": 10444.89,
+        "Quantile_Crossing_Violations": 0,
+        "Empirical_Coverage_Pct": 80.0,
+        "Upper_Pinball_Loss": 401.22,
+        "Lower_Pinball_Loss": 233.17,
+        "mae": 2455.13,
+        "rmse": 3035.98,
+        "mape": 24.28,
+        "pinball_loss_mean": 317.195,
+        "quantile_crossing_violations": 0
+      },
+      "quantile_violations": 0,
+      "forecast_sample": [
+        {
+          "Date": "2026-01-01",
+          "Forecasted_Spend_USD": 10053.7,
+          "Predicted_Spend_USD": 10053.7,
+          "Upper_Bound_95_USD": 14694.75,
+          "UpperBound_Spend_USD": 14694.75,
+          "Lower_Bound_95_USD": 7770.6,
+          "LowerBound_Spend_USD": 7770.6,
+          "Is_Forecast": 1
+        },
+        {
+          "Date": "2026-01-02",
+          "Forecasted_Spend_USD": 9433.37,
+          "Predicted_Spend_USD": 9433.37,
+          "Upper_Bound_95_USD": 13608.75,
+          "UpperBound_Spend_USD": 13608.75,
+          "Lower_Bound_95_USD": 7499.96,
+          "LowerBound_Spend_USD": 7499.96,
+          "Is_Forecast": 1
+        },
+        {
+          "Date": "2026-01-03",
+          "Forecasted_Spend_USD": 9549.9,
+          "Predicted_Spend_USD": 9549.9,
+          "Upper_Bound_95_USD": 14089.55,
+          "UpperBound_Spend_USD": 14089.55,
+          "Lower_Bound_95_USD": 7484.31,
+          "LowerBound_Spend_USD": 7484.31,
+          "Is_Forecast": 1
+        },
+        {
+          "Date": "2026-01-04",
+          "Forecasted_Spend_USD": 11146.14,
+          "Predicted_Spend_USD": 11146.14,
+          "Upper_Bound_95_USD": 13976.24,
+          "UpperBound_Spend_USD": 13976.24,
+          "Lower_Bound_95_USD": 7668.29,
+          "LowerBound_Spend_USD": 7668.29,
+          "Is_Forecast": 1
+        },
+        {
+          "Date": "2026-01-05",
+          "Forecasted_Spend_USD": 12050.78,
+          "Predicted_Spend_USD": 12050.78,
+          "Upper_Bound_95_USD": 14791.44,
+          "UpperBound_Spend_USD": 14791.44,
+          "Lower_Bound_95_USD": 7671.78,
+          "LowerBound_Spend_USD": 7671.78,
+          "Is_Forecast": 1
+        }
+      ],
+      "errors": []
+    }
+  },
+  "finops_toolkit": {
+    "status": "EXTRACTED",
+    "message": "Found 11 CSV files",
+    "files_found": [
+      "EA-Cost-Actual.csv",
+      "EA-Cost-Amortized.csv",
+      "EA-Cost-FOCUS_1.0-preview.csv",
+      "EA-Cost-FOCUS_1.0.csv",
+      "EA-Prices.csv",
+      "EA-Reservations-Details.csv",
+      "EA-Reservations-Recommendations.csv",
+      "EA-Reservations-Transactions.csv",
+      "MCA-Reservations-Details.csv",
+      "MCA-Reservations-Recommendations.csv",
+      "MCA-Reservations-Transactions.csv"
+    ]
+  }
+}

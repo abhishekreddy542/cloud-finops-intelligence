@@ -284,11 +284,17 @@ class FinOpsForecaster:
         """Alias for _create_features for notebook and pipeline compatibility."""
         return self._create_features(df, is_training=False)
 
-    def generate_future_forecast(self, days_ahead=60, workload_growth_pct=0.0, finops_savings_pct=0.0) -> pd.DataFrame:
+    def generate_future_forecast(self, days_ahead=60, workload_growth_pct=0.0, finops_savings_pct=0.0, days=None, **kwargs) -> pd.DataFrame:
         """
         Recursively forecasts cloud spend into the future with scenario levers.
         Guarantees non-crossing quantile bounds (Lower <= Median <= Upper).
+        Supports days or days_ahead parameter flexibly.
         """
+        if days is not None:
+            days_ahead = days
+        elif "days" in kwargs and kwargs["days"] is not None:
+            days_ahead = kwargs["days"]
+            
         cols = ["Date", "Forecasted_Spend_USD", "Upper_Bound_95_USD", "Lower_Bound_95_USD", "Is_Forecast"]
         if days_ahead <= 0 or self.last_daily_df is None or self.last_daily_df.empty:
             return pd.DataFrame(columns=cols)
@@ -338,10 +344,13 @@ class FinOpsForecaster:
                 "Date": future_date.strftime("%Y-%m-%d"),
                 "Forecasted_Spend_USD": round(adj_base, 2),
                 "Predicted_Spend_USD": round(adj_base, 2),
+                "Predicted_Spend": round(adj_base, 2),
                 "Upper_Bound_95_USD": round(adj_upper, 2),
                 "UpperBound_Spend_USD": round(adj_upper, 2),
+                "Upper_Bound_P95": round(adj_upper, 2),
                 "Lower_Bound_95_USD": round(adj_lower, 2),
                 "LowerBound_Spend_USD": round(adj_lower, 2),
+                "Lower_Bound_P05": round(adj_lower, 2),
                 "Is_Forecast": 1
             })
             

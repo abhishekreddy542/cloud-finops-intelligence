@@ -6,15 +6,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
-    /* Base Surfaces */
-    --bg-base: #060911;
-    --bg-surface: #0a0e1a;
-    --bg-card: rgba(13, 20, 36, 0.72);
-    --bg-card-hover: rgba(18, 28, 51, 0.85);
-    --bg-card-terminal: rgba(9, 14, 26, 0.92);
+    /* Base Surfaces - Rich Obsidian & Deep Void Dark */
+    --bg-base: #030712;
+    --bg-surface: #0b0f19;
+    --bg-card: rgba(11, 15, 25, 0.82);
+    --bg-card-hover: rgba(15, 23, 42, 0.95);
+    --bg-card-terminal: rgba(7, 11, 20, 0.95);
 
-    /* Glass Borders */
-    --border-card: rgba(255, 255, 255, 0.08);
+    /* Subtle Hairline Glass Borders */
+    --border-card: rgba(255, 255, 255, 0.07);
     --border-card-hover: rgba(56, 189, 248, 0.35);
     --border-card-glow: rgba(56, 189, 248, 0.15);
     --border-subtle: rgba(255, 255, 255, 0.05);
@@ -687,4 +687,15 @@ tbody tr:last-child td {
         opacity: 1;
         transform: scale(1) translateY(0);
     }
+}
+
+/* Executive Status Glow */
+@keyframes livePulseGlow {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.6); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(56, 189, 248, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+}
+
+.live-pulse-glow {
+    animation: livePulseGlow 2.4s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }

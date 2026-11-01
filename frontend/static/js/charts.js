@@ -47,31 +47,35 @@ const Charts = {
             };
         });
 
-        // Provider-colored Anomaly Annotations
-        const anomalyPoints = anomalies.slice(0, 10).map(a => {
+        // Top 3 highest severity anomalies with subtle, elegant markers (no dense label clutter)
+        const topAnomalies = [...anomalies]
+            .sort((a, b) => (b.cost_spike_usd || b.DailyCost_USD || 0) - (a.cost_spike_usd || a.DailyCost_USD || 0))
+            .slice(0, 3);
+
+        const anomalyPoints = topAnomalies.map(a => {
             const provColor = CLOUD_COLORS[a.CloudProvider] || '#f43f5e';
             return {
                 x: a.Date,
                 y: Math.round(a.DailyCost_USD),
                 marker: {
-                    size: 7,
+                    size: 5,
                     fillColor: provColor,
-                    strokeColor: '#ffffff',
-                    strokeWidth: 2.5,
+                    strokeColor: '#030712',
+                    strokeWidth: 2,
                     shape: 'circle'
                 },
                 label: {
-                    borderColor: provColor,
+                    borderColor: 'rgba(244, 63, 94, 0.4)',
                     offsetY: -6,
                     style: {
-                        color: '#ffffff',
-                        background: provColor,
-                        fontSize: '9px',
+                        color: '#f8fafc',
+                        background: 'rgba(15, 23, 42, 0.92)',
+                        fontSize: '10px',
                         fontFamily: 'JetBrains Mono',
-                        fontWeight: 700,
-                        padding: { left: 5, right: 5, top: 3, bottom: 3 }
+                        fontWeight: 600,
+                        padding: { left: 6, right: 6, top: 2, bottom: 2 }
                     },
-                    text: `${a.CloudProvider} SPIKE`
+                    text: `⚠ ${a.CloudProvider} Spike`
                 }
             };
         });
@@ -89,26 +93,29 @@ const Charts = {
                     speed: 650
                 }
             },
+            dataLabels: {
+                enabled: false
+            },
             colors: [CLOUD_COLORS.AWS, CLOUD_COLORS.Azure, CLOUD_COLORS.GCP],
             fill: {
                 type: 'gradient',
                 gradient: {
                     shade: 'dark',
                     type: 'vertical',
-                    shadeIntensity: 0.5,
-                    opacityFrom: 0.38,
-                    opacityTo: 0.03,
-                    stops: [0, 95, 100]
+                    shadeIntensity: 0.4,
+                    opacityFrom: 0.35,
+                    opacityTo: 0.02,
+                    stops: [0, 92, 100]
                 }
             },
             stroke: {
                 curve: 'smooth',
-                width: 2.5
+                width: 2.2
             },
             xaxis: {
                 categories: dates,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: '#94a3b8', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     rotate: -20,
                     hideOverlappingLabels: true
                 },
@@ -117,13 +124,15 @@ const Charts = {
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: '#94a3b8', fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => `$${Math.round(val).toLocaleString()}`
                 }
             },
             grid: {
-                borderColor: 'rgba(255, 255, 255, 0.05)',
-                strokeDashArray: 4
+                borderColor: 'rgba(255, 255, 255, 0.04)',
+                strokeDashArray: 3,
+                xaxis: { lines: { show: false } },
+                yaxis: { lines: { show: true } }
             },
             legend: {
                 position: 'top',
@@ -136,8 +145,61 @@ const Charts = {
             },
             tooltip: {
                 theme: 'dark',
-                y: {
-                    formatter: val => `$${Math.round(val).toLocaleString()}`
+                shared: true,
+                intersect: false,
+                custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                    const date = w.globals.categoryLabels[dataPointIndex] || dates[dataPointIndex] || '';
+                    const awsVal = series[0] && series[0][dataPointIndex] !== undefined ? series[0][dataPointIndex] : 0;
+                    const azureVal = series[1] && series[1][dataPointIndex] !== undefined ? series[1][dataPointIndex] : 0;
+                    const gcpVal = series[2] && series[2][dataPointIndex] !== undefined ? series[2][dataPointIndex] : 0;
+                    const totalVal = (awsVal || 0) + (azureVal || 0) + (gcpVal || 0);
+
+                    const matchedAnom = anomalies.find(a => a.Date === date);
+
+                    let html = `<div class="p-3 bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md min-w-[220px] text-xs font-sans">`;
+                    html += `<div class="font-mono text-slate-400 font-semibold mb-2 pb-1.5 border-b border-slate-800/80 flex items-center justify-between">
+                                <span class="text-white">${date}</span>
+                                <span class="text-[10px] text-sky-400 font-mono tracking-wider">DAILY TOTAL</span>
+                             </div>`;
+                    
+                    html += `<div class="space-y-1.5 mb-2">
+                                <div class="flex items-center justify-between gap-4">
+                                    <span class="flex items-center gap-1.5 text-slate-300">
+                                        <span class="w-2 h-2 rounded-full" style="background:#FF9900"></span>
+                                        <span>AWS Spend</span>
+                                    </span>
+                                    <span class="font-mono font-bold text-white">$${(awsVal || 0).toLocaleString()}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-4">
+                                    <span class="flex items-center gap-1.5 text-slate-300">
+                                        <span class="w-2 h-2 rounded-full" style="background:#0284C7"></span>
+                                        <span>Azure Spend</span>
+                                    </span>
+                                    <span class="font-mono font-bold text-white">$${(azureVal || 0).toLocaleString()}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-4">
+                                    <span class="flex items-center gap-1.5 text-slate-300">
+                                        <span class="w-2 h-2 rounded-full" style="background:#10B981"></span>
+                                        <span>GCP Spend</span>
+                                    </span>
+                                    <span class="font-mono font-bold text-white">$${(gcpVal || 0).toLocaleString()}</span>
+                                </div>
+                             </div>`;
+
+                    html += `<div class="pt-1.5 border-t border-slate-800/80 flex items-center justify-between font-semibold text-slate-200">
+                                <span>Total Expenditure</span>
+                                <span class="font-mono font-bold text-sky-400">$${totalVal.toLocaleString()}</span>
+                             </div>`;
+
+                    if (matchedAnom) {
+                        html += `<div class="mt-2.5 px-2 py-1 rounded-md bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px] font-mono flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+                                    <span>${matchedAnom.anomaly_severity || 'SPIKE'}: ${matchedAnom.CloudProvider} ${matchedAnom.Service || ''} (+$${Math.round(matchedAnom.cost_spike_usd || 0).toLocaleString()})</span>
+                                 </div>`;
+                    }
+
+                    html += `</div>`;
+                    return html;
                 }
             }
         };
@@ -233,6 +295,9 @@ const Charts = {
                 background: 'transparent',
                 toolbar: { show: false }
             },
+            dataLabels: {
+                enabled: false
+            },
             colors: [CLOUD_COLORS.AWS, CLOUD_COLORS.Azure, CLOUD_COLORS.GCP],
             plotOptions: {
                 bar: {
@@ -291,6 +356,9 @@ const Charts = {
                 height: 360,
                 background: 'transparent',
                 toolbar: { show: false }
+            },
+            dataLabels: {
+                enabled: false
             },
             colors: ['#6366f1'],
             plotOptions: {
@@ -377,6 +445,9 @@ const Charts = {
                     speed: 700
                 }
             },
+            dataLabels: {
+                enabled: false
+            },
             colors: ['#64748b', '#10b981', '#38bdf8', '#0284c7'],
             stroke: {
                 width: [2, 3, 1.8, 1.8],
@@ -447,6 +518,9 @@ const Charts = {
                 background: 'transparent',
                 toolbar: { show: false }
             },
+            dataLabels: {
+                enabled: false
+            },
             colors: ['#10b981'],
             plotOptions: {
                 bar: {
@@ -478,5 +552,13 @@ const Charts = {
         const chart = new ApexCharts(document.getElementById(containerId), options);
         chart.render();
         this.instances[containerId] = chart;
+    },
+
+    // Executive Aliases for Trends Chart compatibility
+    initTrendsChart(containerId, trendsData) {
+        return this.renderDailySpend(containerId, trendsData);
+    },
+    renderTrendsChart(containerId, trendsData) {
+        return this.renderDailySpend(containerId, trendsData);
     }
 };

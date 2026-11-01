@@ -1,1 +1,75 @@
 @import url('styles.css');
+
+/* ==========================================================================
+   Executive Theme Polish & Micro-Animations
+   ========================================================================== */
+
+/* Smooth Tab Transitions */
+.tab-content {
+    animation-duration: 0.28s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+}
+
+/* Subtle Card Hover Elevation */
+.glass-panel, .kpi-card {
+    will-change: transform, border-color, box-shadow;
+}
+
+/* Header Text Protection & Alignment */
+header span, header div {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Header Anti-Wrap & Independent Horizontal Scrolling */
+header#topAppBar, header {
+    white-space: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(56, 189, 248, 0.3) transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom sleek, ultra-subtle scrollbar for the top header pane */
+header#topAppBar::-webkit-scrollbar, header::-webkit-scrollbar {
+    height: 3px;
+}
+header#topAppBar::-webkit-scrollbar-track, header::-webkit-scrollbar-track {
+    background: transparent;
+}
+header#topAppBar::-webkit-scrollbar-thumb, header::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.3);
+    border-radius: 9999px;
+}
+header#topAppBar::-webkit-scrollbar-thumb:hover, header::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 189, 248, 0.6);
+}
+
+/* Main Dashboard & Body: strictly locked horizontally (only top bar scrolls) */
+body, main, .tab-content {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+header .whitespace-nowrap {
+    white-space: nowrap !important;
+}
+#kpiMaturityStage, #activeSourceLabel, #lastRefreshedPill {
+    white-space: nowrap !important;
+    display: inline-block;
+}
+#maturityPillWrapper {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    max-width: 260px;
+    overflow: hidden;
+}
+
+/* Strict ApexCharts De-clutter: Prevent dataLabels from polluting area & line charts */
+.apexcharts-datalabels, .apexcharts-datalabel, .apexcharts-data-labels {
+    pointer-events: none;
+}

@@ -23,3 +23,8 @@ catboost_info/
 *.db-wal
 ~$*.docx
 
+# Large datasets & raw archives (>100MB)
+*.zip
+data/uat/finops-toolkit/
+data/uat/*.zip
+
