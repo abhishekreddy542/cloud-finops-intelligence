@@ -15,8 +15,21 @@ from backend.services import finops_service
 from backend.pricing_engine import (
     CLOUD_CATALOG,
     REAL_CLOUD_CATALOG,
+    HYPERSCALER_PRICING_CATALOG,
     CloudCalculatorRequest,
-    calculate_cloud_workload_estimate
+    calculate_cloud_workload_estimate,
+    calculate_azure_sql_database_cost,
+    calculate_azure_cosmos_db_cost,
+    calculate_azure_egress_cost,
+    calculate_aws_egress_cost,
+    calculate_aws_ebs_cost,
+    calculate_aws_s3_cost,
+    calculate_aws_rds_cost,
+    calculate_aws_dynamodb_cost,
+    calculate_gcp_cloud_sql_cost,
+    calculate_gcp_bigquery_cost,
+    calculate_gcp_network_egress_cost,
+    normalize_provider_key
 )
 from src.database import (
     get_daily_spend_summary,
@@ -387,7 +400,7 @@ def simulate_workload(
     req: SimulateRequest,
     current_user: dict = Depends(get_current_user)
 ):
-    provider_key = req.cloud_provider if req.cloud_provider in CLOUD_CATALOG else "AWS"
+    provider_key = normalize_provider_key(req.cloud_provider)
     prov = CLOUD_CATALOG[provider_key]
     regions = prov["regions"]
     reg_key = req.region.strip() if req.region and req.region.strip() in regions else list(regions.keys())[0]
@@ -404,12 +417,25 @@ def simulate_workload(
     monthly_savings = monthly_cost * (req.downsize_pct / 100.0)
     
     # Instance SKU
-    fam = (req.machine_family or "m6i").strip()
+    fam = (req.machine_family or ("Standard_Dsv5" if provider_key == "Azure" else "m6i" if provider_key == "AWS" else "e2")).strip()
     if provider_key == "AWS":
         size_tag = "8xlarge" if req.vcpu_count >= 32 else "4xlarge" if req.vcpu_count >= 16 else "2xlarge" if req.vcpu_count >= 8 else "xlarge"
         sku = f"{fam}.{size_tag}"
     elif provider_key == "Azure":
-        sku = f"{fam}_{req.vcpu_count}s_v5" if "_" not in fam else f"{fam}"
+        if fam in ("Standard_Dsv5", "Standard_D"):
+            sku = f"Standard_D{req.vcpu_count}s_v5"
+        elif fam in ("Standard_Esv5", "Standard_E"):
+            sku = f"Standard_E{req.vcpu_count}s_v5"
+        elif fam in ("Standard_Fsv2", "Standard_F"):
+            sku = f"Standard_F{req.vcpu_count}s_v2"
+        elif fam == "Standard_B":
+            sku = f"Standard_B{req.vcpu_count}s" if req.vcpu_count <= 2 else "Standard_B4ms"
+        elif fam in ("Standard_NCas_T4", "Standard_NC"):
+            sku = f"Standard_NC{req.vcpu_count}as_T4_v3"
+        elif "_" in fam:
+            sku = fam
+        else:
+            sku = f"Standard_{fam}_{req.vcpu_count}s_v5"
     elif provider_key == "GCP":
         sku = f"{fam}-standard-{req.vcpu_count}"
     else:
@@ -463,6 +489,154 @@ def compare_multicloud_pricing(
     current_user: dict = Depends(get_current_user)
 ):
     return calculate_cloud_workload_estimate(req)
+
+
+@app.post("/api/calculator/azure/database")
+def calculate_azure_database_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for Azure SQL Database (vCore/DTU) or Azure Cosmos DB."""
+    engine = payload.get("engine", "sql_vcore")
+    if "cosmos" in engine.lower():
+        mode = payload.get("capacity_mode", "provisioned")
+        ru = float(payload.get("provisioned_ru", 400.0))
+        m_ru = float(payload.get("serverless_million_ru", 10.0))
+        storage = float(payload.get("storage_gb", 50.0))
+        reg_mult = float(payload.get("region_multiplier", 1.0))
+        return calculate_azure_cosmos_db_cost(mode, ru, m_ru, storage, reg_mult)
+    else:
+        model = payload.get("model", "vCore")
+        vcore = float(payload.get("vcore_count", 2.0))
+        dtu = float(payload.get("dtu_count", 100.0))
+        storage = float(payload.get("storage_gb", 100.0))
+        commitment = payload.get("commitment", "on_demand")
+        ahb = bool(payload.get("azure_hybrid_benefit", False))
+        reg_mult = float(payload.get("region_multiplier", 1.0))
+        return calculate_azure_sql_database_cost(model, vcore, dtu, storage, commitment, ahb, reg_mult)
+
+@app.post("/api/calculator/azure/networking")
+def calculate_azure_networking_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for Azure Internet and Inter-Region Data Egress (first 100GB free)."""
+    egress_gb = float(payload.get("egress_gb", 0.0))
+    egress_type = payload.get("egress_type", "internet")
+    return calculate_azure_egress_cost(egress_gb, egress_type)
+
+
+@app.get("/api/calculator/aws/catalog")
+def get_aws_specific_catalog(
+    current_user: dict = Depends(get_current_user)
+):
+    """Returns AWS catalog with EC2 presets, EBS/S3 tiers, commitment models, RDS, DynamoDB, and egress."""
+    return HYPERSCALER_PRICING_CATALOG["AWS"]
+
+
+@app.post("/api/calculator/aws/database")
+def calculate_aws_database_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for AWS RDS (Aurora MySQL/PostgreSQL, db.m6i.large Multi-AZ) or DynamoDB."""
+    engine = payload.get("engine", "rds")
+    reg_mult = float(payload.get("region_multiplier", 1.0))
+    if "dynamodb" in engine.lower():
+        mode = payload.get("capacity_mode", "provisioned")
+        wcu = float(payload.get("wcu", 100.0))
+        rcu = float(payload.get("rcu", 200.0))
+        storage = float(payload.get("storage_gb", 50.0))
+        m_writes = float(payload.get("million_writes", 10.0))
+        m_reads = float(payload.get("million_reads", 50.0))
+        return calculate_aws_dynamodb_cost(mode, wcu, rcu, storage, m_writes, m_reads, reg_mult)
+    else:
+        service_key = payload.get("service_key", "rds_m6i_large_multiaz")
+        multi_az = bool(payload.get("multi_az", True))
+        hours = int(payload.get("hours_per_month", 730))
+        return calculate_aws_rds_cost(service_key, multi_az, hours, reg_mult)
+
+
+@app.post("/api/calculator/aws/storage")
+def calculate_aws_storage_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for AWS EBS volumes (gp3/gp2/io2/st1/sc1) or S3 Object Storage tiers."""
+    service = payload.get("service", "ebs")
+    reg_mult = float(payload.get("region_multiplier", 1.0))
+    if "s3" in service.lower() or "object" in service.lower():
+        tier = payload.get("tier", "s3-standard")
+        size = float(payload.get("size_gb", 1000.0))
+        return calculate_aws_s3_cost(tier, size, reg_mult)
+    else:
+        vol_type = payload.get("volume_type", "gp3")
+        size = float(payload.get("size_gb", 100.0))
+        iops = int(payload.get("provisioned_iops", 3000))
+        tp = int(payload.get("throughput_mbps", 125))
+        return calculate_aws_ebs_cost(vol_type, size, iops, tp, reg_mult)
+
+
+@app.post("/api/calculator/aws/networking")
+def calculate_aws_networking_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for AWS Internet Data Transfer / Egress (first 100GB free, $0.09/GB thereafter)."""
+    egress_gb = float(payload.get("egress_gb", 0.0))
+    return calculate_aws_egress_cost(egress_gb)
+
+
+@app.get("/api/calculator/gcp/catalog")
+def get_gcp_specific_catalog(
+    current_user: dict = Depends(get_current_user)
+):
+    """Returns Google Cloud Platform specific catalog including Cloud SQL, BigQuery, and Network Tiers."""
+    return CLOUD_CATALOG.get("GCP", {})
+
+
+@app.post("/api/calculator/gcp/database")
+def calculate_gcp_database_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for Google Cloud SQL (MySQL, PostgreSQL, or Enterprise Plus)."""
+    engine = payload.get("engine", "mysql")
+    sku = payload.get("sku", "db-custom-4-15360")
+    storage = float(payload.get("storage_gb", 100.0))
+    ha = bool(payload.get("high_availability", False))
+    commitment = payload.get("commitment", "on_demand")
+    reg_mult = float(payload.get("region_multiplier", 1.0))
+    return calculate_gcp_cloud_sql_cost(engine, sku, storage, ha, commitment, reg_mult)
+
+
+@app.post("/api/calculator/gcp/bigquery")
+def calculate_gcp_bigquery_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for Google BigQuery (On-Demand analysis or Standard/Enterprise/Enterprise Plus editions)."""
+    model = payload.get("pricing_model", "on_demand")
+    edition = payload.get("edition", "enterprise")
+    query_tb = float(payload.get("query_tb_per_month", 10.0))
+    slots = int(payload.get("slots_reserved", 100))
+    active_storage = float(payload.get("active_storage_gb", 500.0))
+    long_term_storage = float(payload.get("long_term_storage_gb", 2000.0))
+    commitment = payload.get("commitment", "on_demand")
+    return calculate_gcp_bigquery_cost(model, edition, query_tb, slots, active_storage, long_term_storage, commitment)
+
+
+@app.post("/api/calculator/gcp/networking")
+def calculate_gcp_networking_estimate(
+    payload: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculates pricing for Google Cloud Network Egress (Premium Tier vs Standard Tier, Inter-region)."""
+    egress_gb = float(payload.get("egress_gb", 0.0))
+    tier = payload.get("tier", "premium")
+    dest = payload.get("destination", "internet")
+    return calculate_gcp_network_egress_cost(egress_gb, tier, dest)
+
 
 @app.get("/api/calculator/catalog")
 def get_pricing_calculator_catalog(

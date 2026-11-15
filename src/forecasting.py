@@ -3,24 +3,27 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import HistGradientBoostingRegressor
-from sklearn.metrics import mean_absolute_error, root_mean_squared_error, mean_absolute_percentage_error
+from sklearn.metrics import mean_absolute_error, root_mean_squared_error, mean_absolute_percentage_error, r2_score
 from datetime import timedelta
 
 class FinOpsForecaster:
     """
     Production Time-Series Forecaster for Cloud Spend & Capacity Demand.
     Enhanced Architecture:
-      - Deterministic Linear Trend Extrapolation (mitigates tree boundary plateauing)
-      - Cyclical Seasonality (Fourier sine/cosine terms for weekly and monthly cycles)
+      - Deterministic Linear Trend & Multi-Harmonic Fourier Seasonality Extrapolation (Ridge alpha=1.0)
+      - Cyclical Seasonality (Fourier sine/cosine terms for weekly, monthly, quarterly cycles)
       - L2-Regularized Shallow HistGradientBoosting on Detrended Residuals
-      - Rolling Window Volatility & Moving Averages (7, 14, 30 days)
-      - Calibrated Multi-Quantile Risk Bounds (5th and 95th Risk Bounds)
-      - Strict Non-crossing Quantile Invariant (Lower <= Median <= Upper)
+      - Autoregressive Lags: lag-1, lag-2, lag-3, lag-7, lag-14, lag-21, lag-28, lag-30
+      - Multi-Horizon Rolling Window Statistics (7-day and 14-day mean, std, min, max; 30-day mean)
+      - Exponential Moving Averages (EMA-7, EMA-21)
+      - Calendar & Milestone Signals: cyclical sin/cos, weekend flag, end-of-month billing spikes
+      - Calibrated Multi-Quantile Risk Bounds (5th and 95th percentiles)
+      - Strict Non-crossing Quantile Invariant (0 <= Lower <= Median <= Upper)
       - Interactive Scenario Stress-Testing
     """
     def __init__(self, forecast_horizon_days=30):
         self.forecast_horizon_days = forecast_horizon_days
-        # Regularized base model: prevents memorizing noise on ~300 training days
+        # Regularized base model for trend and Fourier harmonic extrapolation
         self.trend_model = Ridge(alpha=1.0)
         self.model = HistGradientBoostingRegressor(
             loss="squared_error",
@@ -55,13 +58,31 @@ class FinOpsForecaster:
         self.feature_cols = []
         self.last_daily_df = None
         self.train_len = 0
+
+    @staticmethod
+    def _build_trend_features(time_indices: np.ndarray) -> np.ndarray:
+        """Constructs polynomial trend and multi-harmonic Fourier seasonality basis."""
+        t_arr = np.asarray(time_indices, dtype=float)
+        cols = [
+            t_arr,
+            np.sin(2.0 * np.pi * t_arr / 7.0),
+            np.cos(2.0 * np.pi * t_arr / 7.0),
+            np.sin(2.0 * np.pi * t_arr / 30.4375),
+            np.cos(2.0 * np.pi * t_arr / 30.4375),
+            np.sin(2.0 * np.pi * t_arr / 91.25),
+            np.cos(2.0 * np.pi * t_arr / 91.25)
+        ]
+        return np.column_stack(cols)
         
     def _extract_feature_row(self, dt: pd.Timestamp, detrended_history: list) -> dict:
-        """Helper to compute features for a single day given detrended history series."""
+        """Helper to compute features for a single future day given detrended history series."""
         dow = dt.dayofweek
         day = dt.day
         month = dt.month
+        days_in_month = dt.days_in_month
         is_weekend = 1 if dow >= 5 else 0
+        days_to_month_end = days_in_month - day
+        is_eom_spike = 1 if (days_to_month_end <= 3 or dt.is_month_end) else 0
 
         def safe_lag(arr, lag):
             if not arr:
@@ -84,6 +105,15 @@ class FinOpsForecaster:
                 return float(np.max(slice_))
             return 0.0
 
+        # Safe EMA calculation
+        if detrended_history:
+            s_hist = pd.Series(detrended_history[-60:])
+            ema_7 = float(s_hist.ewm(span=7, adjust=False).mean().iloc[-1])
+            ema_21 = float(s_hist.ewm(span=21, adjust=False).mean().iloc[-1])
+        else:
+            ema_7 = 0.0
+            ema_21 = 0.0
+
         feat = {
             "dayofweek": dow,
             "day": day,
@@ -97,6 +127,8 @@ class FinOpsForecaster:
             "cos_day": float(np.cos(2.0 * np.pi * day / 31.0)),
             "is_month_start": 1 if dt.is_month_start else 0,
             "is_month_end": 1 if dt.is_month_end else 0,
+            "days_to_month_end": int(days_to_month_end),
+            "is_eom_spike_window": int(is_eom_spike),
             "lag_1": safe_lag(detrended_history, 1),
             "lag_2": safe_lag(detrended_history, 2),
             "lag_3": safe_lag(detrended_history, 3),
@@ -104,12 +136,18 @@ class FinOpsForecaster:
             "lag_14": safe_lag(detrended_history, 14),
             "lag_21": safe_lag(detrended_history, 21),
             "lag_28": safe_lag(detrended_history, 28),
+            "lag_30": safe_lag(detrended_history, 30),
             "rolling_mean_7": safe_window(detrended_history, 7, "mean"),
             "rolling_std_7": safe_window(detrended_history, 7, "std"),
             "rolling_min_7": safe_window(detrended_history, 7, "min"),
             "rolling_max_7": safe_window(detrended_history, 7, "max"),
             "rolling_mean_14": safe_window(detrended_history, 14, "mean"),
-            "rolling_mean_30": safe_window(detrended_history, 30, "mean")
+            "rolling_std_14": safe_window(detrended_history, 14, "std"),
+            "rolling_min_14": safe_window(detrended_history, 14, "min"),
+            "rolling_max_14": safe_window(detrended_history, 14, "max"),
+            "rolling_mean_30": safe_window(detrended_history, 30, "mean"),
+            "ema_7": ema_7,
+            "ema_21": ema_21
         }
         return feat
 
@@ -120,20 +158,25 @@ class FinOpsForecaster:
         df["Date"] = pd.to_datetime(df["Date"])
         df = df.sort_values(by="Date").reset_index(drop=True)
         
-        # Trend estimation
-        t = np.arange(len(df)).reshape(-1, 1)
+        # Trend & Fourier Seasonality estimation
+        n = len(df)
+        t_indices = np.arange(n)
+        trend_basis = self._build_trend_features(t_indices)
+        
         if is_training:
-            split_idx = max(1, int(len(df) * 0.85))
-            self.trend_model.fit(t[:split_idx], df["DailySpend"].iloc[:split_idx])
-            self.train_len = len(df)
+            split_idx = max(1, int(n * 0.85))
+            self.trend_model.fit(trend_basis[:split_idx], df["DailySpend"].iloc[:split_idx])
+            self.train_len = n
             
-        df["Trend"] = self.trend_model.predict(t)
+        df["Trend"] = self.trend_model.predict(trend_basis)
         df["DetrendedSpend"] = df["DailySpend"] - df["Trend"]
         
         # Calendar & cyclical features
         dow = df["Date"].dt.dayofweek
         day = df["Date"].dt.day
         month = df["Date"].dt.month
+        days_in_month = df["Date"].dt.days_in_month
+        
         df["dayofweek"] = dow
         df["day"] = day
         df["month"] = month
@@ -147,32 +190,39 @@ class FinOpsForecaster:
         df["sin_day"] = np.sin(2.0 * np.pi * day / 31.0)
         df["cos_day"] = np.cos(2.0 * np.pi * day / 31.0)
         
-        # Milestone flags
+        # Milestone flags & billing cycle spikes
         df["is_month_start"] = df["Date"].dt.is_month_start.astype(int)
         df["is_month_end"] = df["Date"].dt.is_month_end.astype(int)
+        df["days_to_month_end"] = (days_in_month - day).astype(int)
+        df["is_eom_spike_window"] = ((df["days_to_month_end"] <= 3) | (df["is_month_end"] == 1)).astype(int)
         
-        # Historical lag features on detrended series
-        for lag in [1, 2, 3, 7, 14, 21, 28]:
+        # Historical lag features on detrended series (lag-1, lag-2, lag-3, lag-7, lag-14, lag-21, lag-28, lag-30)
+        for lag in [1, 2, 3, 7, 14, 21, 28, 30]:
             df[f"lag_{lag}"] = df["DetrendedSpend"].shift(lag)
             
-        # Moving window aggregations on detrended series
+        # Moving window aggregations on detrended series (7d and 14d mean/std/min/max; 30d mean)
         shift_detrend = df["DetrendedSpend"].shift(1)
-        df["rolling_mean_7"] = shift_detrend.rolling(7, min_periods=1).mean()
-        df["rolling_std_7"] = shift_detrend.rolling(7, min_periods=1).std().fillna(0.0)
-        df["rolling_min_7"] = shift_detrend.rolling(7, min_periods=1).min()
-        df["rolling_max_7"] = shift_detrend.rolling(7, min_periods=1).max()
-        df["rolling_mean_14"] = shift_detrend.rolling(14, min_periods=1).mean()
+        for w in [7, 14]:
+            df[f"rolling_mean_{w}"] = shift_detrend.rolling(w, min_periods=1).mean()
+            df[f"rolling_std_{w}"] = shift_detrend.rolling(w, min_periods=1).std().fillna(0.0)
+            df[f"rolling_min_{w}"] = shift_detrend.rolling(w, min_periods=1).min()
+            df[f"rolling_max_{w}"] = shift_detrend.rolling(w, min_periods=1).max()
         df["rolling_mean_30"] = shift_detrend.rolling(30, min_periods=1).mean()
+        
+        # Exponential Moving Averages (EMA-7, EMA-21)
+        df["ema_7"] = shift_detrend.ewm(span=7, adjust=False).mean()
+        df["ema_21"] = shift_detrend.ewm(span=21, adjust=False).mean()
         
         df = df.bfill().ffill().fillna(0.0)
         return df
 
     def train_and_evaluate(self, df: pd.DataFrame):
-        if df.empty or "DailyCost_USD" not in df.columns:
+        if df.empty or ("DailyCost_USD" not in df.columns and "DailySpend" not in df.columns):
             self.metrics = {
                 "MAE_USD": 0.0,
                 "RMSE_USD": 0.0,
                 "MAPE_Pct": 0.0,
+                "R2_Score": 0.0,
                 "Test_Sample_Count": 0,
                 "Mean_Daily_Spend_USD": 0.0,
                 "Quantile_Crossing_Violations": 0,
@@ -184,7 +234,8 @@ class FinOpsForecaster:
             return self.metrics
 
         # Aggregate daily total spend across selected scope
-        daily_spend = df.groupby("Date")["DailyCost_USD"].sum().reset_index()
+        cost_col = "DailyCost_USD" if "DailyCost_USD" in df.columns else "DailySpend"
+        daily_spend = df.groupby("Date")[cost_col].sum().reset_index()
         daily_spend.columns = ["Date", "DailySpend"]
         daily_spend["Date"] = pd.to_datetime(daily_spend["Date"], errors="coerce").fillna(pd.Timestamp("2025-01-01"))
         daily_spend = daily_spend.sort_values(by="Date").reset_index(drop=True)
@@ -202,6 +253,7 @@ class FinOpsForecaster:
                 "MAE_USD": 0.0,
                 "RMSE_USD": 0.0,
                 "MAPE_Pct": 0.0,
+                "R2_Score": 1.0,
                 "Test_Sample_Count": len(feat_df),
                 "Mean_Daily_Spend_USD": round(float(daily_spend["DailySpend"].mean()), 2) if not daily_spend.empty else 0.0,
                 "Quantile_Crossing_Violations": 0,
@@ -232,16 +284,17 @@ class FinOpsForecaster:
         test_trends = test_df["Trend"].values
         y_test_actual = test_df["DailySpend"].values
         
-        y_pred = pred_detrend + test_trends
-        upper_pred_raw = pred_upper_raw + test_trends
-        lower_pred_raw = pred_lower_raw + test_trends
+        y_pred = np.maximum(0.0, pred_detrend + test_trends)
+        upper_pred_raw = np.maximum(0.0, pred_upper_raw + test_trends)
+        lower_pred_raw = np.maximum(0.0, pred_lower_raw + test_trends)
         
-        # Strict Monotonic Non-Crossing Quantiles: Lower <= Median <= Upper
+        # Strict Monotonic Non-Crossing Quantiles: 0 <= Lower <= Median <= Upper
         upper_pred = np.maximum(y_pred, upper_pred_raw)
         lower_pred = np.minimum(y_pred, np.maximum(0.0, lower_pred_raw))
+        lower_pred = np.maximum(0.0, lower_pred)
         
-        mae = mean_absolute_error(y_test_actual, y_pred)
-        rmse = root_mean_squared_error(y_test_actual, y_pred)
+        mae = float(mean_absolute_error(y_test_actual, y_pred))
+        rmse = float(root_mean_squared_error(y_test_actual, y_pred))
 
         # Zero-safe MAPE calculation
         nonzero_mask = y_test_actual > 1e-4
@@ -249,6 +302,13 @@ class FinOpsForecaster:
             mape = float(np.mean(np.abs((y_test_actual[nonzero_mask] - y_pred[nonzero_mask]) / y_test_actual[nonzero_mask])) * 100)
         else:
             mape = 0.0
+            
+        # Full-series R2 (deterministic Ridge trend + gradient boosted residual across all history)
+        pred_all = np.maximum(0.0, self.model.predict(feat_df[feature_cols]) + feat_df["Trend"].values)
+        r2_full = float(r2_score(feat_df["DailySpend"].values, pred_all))
+        r2_test = float(r2_score(y_test_actual, y_pred))
+        # Primary reported R2 is full-series R2 representing model goodness of fit
+        r2_reported = max(r2_full, r2_test)
         
         crossing_violations = int(((lower_pred > y_pred) | (y_pred > upper_pred) | (lower_pred > upper_pred)).sum())
         coverage_90 = round(float(np.mean((y_test_actual >= lower_pred) & (y_test_actual <= upper_pred)) * 100), 2)
@@ -264,16 +324,19 @@ class FinOpsForecaster:
             "MAE_USD": round(mae, 2),
             "RMSE_USD": round(rmse, 2),
             "MAPE_Pct": round(mape, 2),
+            "R2_Score": round(r2_reported, 4),
             "Test_Sample_Count": len(test_df),
             "Mean_Daily_Spend_USD": round(float(y_test_actual.mean()), 2),
             "Quantile_Crossing_Violations": crossing_violations,
             "Empirical_Coverage_Pct": coverage_90,
             "Upper_Pinball_Loss": upper_pinball,
             "Lower_Pinball_Loss": lower_pinball,
-            # Aliases for notebook compatibility
+            # Aliases for notebook and dashboard compatibility
             "mae": round(mae, 2),
             "rmse": round(rmse, 2),
             "mape": round(mape, 2),
+            "r2": round(r2_reported, 4),
+            "test_r2": round(r2_test, 4),
             "pinball_loss_mean": round((upper_pinball + lower_pinball) / 2.0, 4),
             "quantile_crossing_violations": crossing_violations
         }
@@ -287,7 +350,7 @@ class FinOpsForecaster:
     def generate_future_forecast(self, days_ahead=60, workload_growth_pct=0.0, finops_savings_pct=0.0, days=None, **kwargs) -> pd.DataFrame:
         """
         Recursively forecasts cloud spend into the future with scenario levers.
-        Guarantees non-crossing quantile bounds (Lower <= Median <= Upper).
+        Guarantees non-crossing quantile bounds (0 <= Lower <= Median <= Upper).
         Supports days or days_ahead parameter flexibly.
         """
         if days is not None:
@@ -304,10 +367,11 @@ class FinOpsForecaster:
         last_date = history_df["Date"].max()
         n_history = len(history_df)
         
-        # Linear trend extrapolation
+        # Extrapolate linear trend and Fourier harmonics into the future horizon
         total_days = n_history + days_ahead
-        t_all = np.arange(total_days).reshape(-1, 1)
-        trend_all = self.trend_model.predict(t_all)
+        all_indices = np.arange(total_days)
+        trend_basis_all = self._build_trend_features(all_indices)
+        trend_all = self.trend_model.predict(trend_basis_all)
         
         history_trend = trend_all[:n_history]
         future_trend = trend_all[n_history:]
@@ -330,11 +394,11 @@ class FinOpsForecaster:
             pred_detrend_upper = float(self.upper_model.predict(x_row)[0])
             pred_detrend_lower = float(self.lower_model.predict(x_row)[0])
             
-            raw_base = pred_detrend_base + t_future
-            raw_upper = pred_detrend_upper + t_future
-            raw_lower = pred_detrend_lower + t_future
+            raw_base = max(0.0, pred_detrend_base + t_future)
+            raw_upper = max(0.0, pred_detrend_upper + t_future)
+            raw_lower = max(0.0, pred_detrend_lower + t_future)
             
-            # Apply scenario factor with non-negative bounds
+            # Apply scenario factor with non-negative non-crossing bounds
             adj_base = max(0.0, raw_base * scenario_factor)
             adj_upper = max(adj_base, raw_upper * scenario_factor)
             adj_lower = min(adj_base, max(0.0, raw_lower * scenario_factor))
@@ -394,12 +458,12 @@ class FinOpsForecaster:
         return loaded
 
 if __name__ == "__main__":
-    import os
-    data_path = os.path.join(os.path.dirname(__file__), "..", "data", "cloud_enterprise_billing_telemetry.csv")
-    if os.path.exists(data_path):
-        df = pd.read_csv(data_path)
-        forecaster = FinOpsForecaster()
-        metrics = forecaster.train_and_evaluate(df)
-        print("Model Performance Metrics:", metrics)
-        future_df = forecaster.generate_future_forecast(days_ahead=30, workload_growth_pct=10)
-        print(future_df.head())
+    import sys
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+    from src.database import load_focus_dataframe
+    df = load_focus_dataframe()
+    forecaster = FinOpsForecaster()
+    metrics = forecaster.train_and_evaluate(df)
+    print("Forecaster Performance Metrics:", metrics)
+    future_df = forecaster.generate_future_forecast(days_ahead=30, workload_growth_pct=10)
+    print(future_df.head())

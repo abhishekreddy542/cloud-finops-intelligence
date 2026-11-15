@@ -5,6 +5,7 @@
  */
 
 const HYPERSCALER_CATALOG = {
+
     'GCP': {
         provider_key: 'GCP',
         name: 'Google Cloud Platform (GCP)',
@@ -20,6 +21,7 @@ const HYPERSCALER_CATALOG = {
             'asia-southeast1': { name: 'asia-southeast1 (Jurong West, Singapore)', multiplier: 1.14 }
         },
         machine_presets: [
+            // Cost-optimized / Shared-core (E2 family)
             { sku: 'e2-micro', family: 'e2', name: 'e2-micro (2 shared vCPU, 1 GB RAM)', vcpu: 0.25, ram_gb: 1.0, base_monthly_usd: 6.11 },
             { sku: 'e2-small', family: 'e2', name: 'e2-small (2 shared vCPU, 2 GB RAM)', vcpu: 0.5, ram_gb: 2.0, base_monthly_usd: 12.23 },
             { sku: 'e2-medium', family: 'e2', name: 'e2-medium (2 shared vCPU, 4 GB RAM)', vcpu: 1.0, ram_gb: 4.0, base_monthly_usd: 24.46 },
@@ -27,33 +29,139 @@ const HYPERSCALER_CATALOG = {
             { sku: 'e2-standard-4', family: 'e2', name: 'e2-standard-4 (4 vCPU, 16 GB RAM)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 97.85 },
             { sku: 'e2-standard-8', family: 'e2', name: 'e2-standard-8 (8 vCPU, 32 GB RAM)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 195.69 },
             { sku: 'e2-standard-16', family: 'e2', name: 'e2-standard-16 (16 vCPU, 64 GB RAM)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 391.38 },
+            // General Purpose Intel (N2 family - Intel Cascade/Ice Lake)
             { sku: 'n2-standard-2', family: 'n2', name: 'n2-standard-2 (2 vCPU, 8 GB RAM - Intel Cascade/Ice Lake)', vcpu: 2.0, ram_gb: 8.0, base_monthly_usd: 71.49 },
             { sku: 'n2-standard-4', family: 'n2', name: 'n2-standard-4 (4 vCPU, 16 GB RAM - Intel Cascade/Ice Lake)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 142.98 },
             { sku: 'n2-standard-8', family: 'n2', name: 'n2-standard-8 (8 vCPU, 32 GB RAM - Intel Cascade/Ice Lake)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 285.96 },
             { sku: 'n2-standard-16', family: 'n2', name: 'n2-standard-16 (16 vCPU, 64 GB RAM - Intel Cascade/Ice Lake)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 571.91 },
             { sku: 'n2-standard-32', family: 'n2', name: 'n2-standard-32 (32 vCPU, 128 GB RAM - Intel Cascade/Ice Lake)', vcpu: 32.0, ram_gb: 128.0, base_monthly_usd: 1143.83 },
+            // General Purpose AMD (N2D family - AMD EPYC Milan - 13% savings)
+            { sku: 'n2d-standard-4', family: 'n2d', name: 'n2d-standard-4 (4 vCPU, 16 GB RAM - AMD EPYC Milan)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 124.39 },
+            { sku: 'n2d-standard-8', family: 'n2d', name: 'n2d-standard-8 (8 vCPU, 32 GB RAM - AMD EPYC Milan)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 248.78 },
+            // Scale-Out / AMD (T2D family - AMD Tau Milan)
             { sku: 't2d-standard-2', family: 't2d', name: 't2d-standard-2 (2 vCPU, 8 GB RAM - AMD Tau Milan)', vcpu: 2.0, ram_gb: 8.0, base_monthly_usd: 59.28 },
             { sku: 't2d-standard-4', family: 't2d', name: 't2d-standard-4 (4 vCPU, 16 GB RAM - AMD Tau Milan)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 118.55 },
             { sku: 't2d-standard-8', family: 't2d', name: 't2d-standard-8 (8 vCPU, 32 GB RAM - AMD Tau Milan)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 237.10 },
+            { sku: 't2d-standard-16', family: 't2d', name: 't2d-standard-16 (16 vCPU, 64 GB RAM - AMD Tau Milan)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 474.20 },
+            // Compute-Optimized (C2 & C3 families)
             { sku: 'c2-standard-4', family: 'c2', name: 'c2-standard-4 (4 vCPU, 16 GB RAM - Compute Intensive)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 152.42 },
             { sku: 'c2-standard-8', family: 'c2', name: 'c2-standard-8 (8 vCPU, 32 GB RAM - Compute Intensive)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 304.85 },
-            { sku: 'c2-standard-16', family: 'c2', name: 'c2-standard-16 (16 vCPU, 64 GB RAM - Compute Intensive)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 609.70 }
+            { sku: 'c2-standard-16', family: 'c2', name: 'c2-standard-16 (16 vCPU, 64 GB RAM - Compute Intensive)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 609.70 },
+            { sku: 'c3-standard-4', family: 'c3', name: 'c3-standard-4 (4 vCPU, 16 GB RAM - Intel Xeon Sapphire Rapids + IPU)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 155.05 },
+            // Memory-Optimized (M1 & M2 families - SAP HANA certified)
+            { sku: 'm1-ultramem-40', family: 'm1', name: 'm1-ultramem-40 (40 vCPU, 961 GB RAM - Memory-Optimized SAP HANA)', vcpu: 40.0, ram_gb: 961.0, base_monthly_usd: 3650.00 },
+            { sku: 'm2-ultramem-208', family: 'm2', name: 'm2-ultramem-208 (208 vCPU, 5888 GB RAM - Ultra-High Memory SAP HANA)', vcpu: 208.0, ram_gb: 5888.0, base_monthly_usd: 24498.80 },
+            // Accelerator / AI (A2 & G2 families)
+            { sku: 'a2-highgpu-1g', family: 'a2', name: 'a2-highgpu-1g (12 vCPU, 85 GB RAM, 1x NVIDIA A100 40GB)', vcpu: 12.0, ram_gb: 85.0, base_monthly_usd: 2682.75 },
+            { sku: 'g2-standard-4', family: 'g2', name: 'g2-standard-4 (4 vCPU, 16 GB RAM, 1x NVIDIA L4 24GB Tensor Core)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 512.46 }
         ],
         custom_rates: { vcpu_hourly: 0.0336, ram_hourly: 0.0045 },
         storage_disk_types: {
             'pd-standard': { name: 'Standard Persistent Disk (pd-standard)', rate_per_gb_month: 0.040, note: 'HDD storage for sequential batch data' },
             'pd-balanced': { name: 'Balanced Persistent Disk (pd-balanced)', rate_per_gb_month: 0.100, note: 'Cost-effective SSD for general-purpose compute' },
             'pd-ssd': { name: 'SSD Persistent Disk (pd-ssd)', rate_per_gb_month: 0.170, note: 'High-IOPS performance SSD for database and low latency' },
-            'pd-extreme': { name: 'Extreme Persistent Disk (pd-extreme)', rate_per_gb_month: 0.250, note: 'Ultra-performance for high-end SAP/RDBMS' }
+            'pd-extreme': { name: 'Extreme Persistent Disk (pd-extreme)', rate_per_gb_month: 0.250, note: 'Ultra-performance for high-end SAP/RDBMS' },
+            'hyperdisk-balanced': { name: 'Hyperdisk Balanced (hyperdisk-balanced)', rate_per_gb_month: 0.090, note: 'Next-gen block storage with dynamically scalable IOPS & throughput' },
+            'hyperdisk-throughput': { name: 'Hyperdisk Throughput (hyperdisk-throughput)', rate_per_gb_month: 0.045, note: 'Cost-effective scale-out analytics and sequential streaming workloads' },
+            'hyperdisk-extreme': { name: 'Hyperdisk Extreme (hyperdisk-extreme)', rate_per_gb_month: 0.300, note: 'Highest maximum IOPS (up to 500k) for mission-critical databases' },
+            'gcs-standard': { name: 'Cloud Storage Standard (gcs-standard)', rate_per_gb_month: 0.020, note: 'Hot active data, web content and multi-cloud analytics' },
+            'gcs-nearline': { name: 'Cloud Storage Nearline (gcs-nearline)', rate_per_gb_month: 0.010, note: 'Fast, durable storage for data accessed less than once a month' },
+            'gcs-coldline': { name: 'Cloud Storage Coldline (gcs-coldline)', rate_per_gb_month: 0.004, note: 'Low-cost disaster recovery and archival accessed at most once a quarter' },
+            'gcs-archive': { name: 'Cloud Storage Archive (gcs-archive)', rate_per_gb_month: 0.0012, note: 'Lowest cost digital preservation and compliance regulatory vault' }
         },
         commitment_discounts: {
-            'on_demand': { name: 'On-Demand (Pay-As-You-Go)', discount_pct: 0.0 },
+            'on_demand': { name: 'On-Demand (Pay-As-You-Go - 0% off)', discount_pct: 0.0 },
             '1yr_commitment': { name: '1-Year Committed Use Discount (CUD - 37% off)', discount_pct: 37.0 },
             '3yr_commitment': { name: '3-Year Committed Use Discount (CUD - 55% off)', discount_pct: 55.0 },
-            'spot': { name: 'Spot / Preemptible VMs (70% off)', discount_pct: 70.0 }
+            'spot': { name: 'Spot / Preemptible VMs (60-91% off, avg 70%)', discount_pct: 70.0 }
+        },
+        database_services: {
+            cloud_sql_mysql: {
+                name: 'Cloud SQL for MySQL (Enterprise)',
+                engine: 'MySQL 8.0',
+                presets: [
+                    { sku: 'db-custom-2-7680', name: 'db-custom-2-7680 (2 vCPU, 7.5 GB RAM)', vcpu: 2.0, ram_gb: 7.5, base_monthly_usd: 98.55 },
+                    { sku: 'db-custom-4-15360', name: 'db-custom-4-15360 (4 vCPU, 15 GB RAM)', vcpu: 4.0, ram_gb: 15.0, base_monthly_usd: 197.10 },
+                    { sku: 'db-custom-8-30720', name: 'db-custom-8-30720 (8 vCPU, 30 GB RAM)', vcpu: 8.0, ram_gb: 30.0, base_monthly_usd: 394.20 }
+                ],
+                storage_rate_per_gb_month: 0.170,
+                ha_multiplier: 2.0,
+                cud_1yr_discount_pct: 25.0,
+                cud_3yr_discount_pct: 52.0
+            },
+            cloud_sql_postgres: {
+                name: 'Cloud SQL for PostgreSQL (Enterprise)',
+                engine: 'PostgreSQL 16',
+                presets: [
+                    { sku: 'db-custom-2-7680', name: 'db-custom-2-7680 (2 vCPU, 7.5 GB RAM)', vcpu: 2.0, ram_gb: 7.5, base_monthly_usd: 98.55 },
+                    { sku: 'db-custom-4-15360', name: 'db-custom-4-15360 (4 vCPU, 15 GB RAM)', vcpu: 4.0, ram_gb: 15.0, base_monthly_usd: 197.10 },
+                    { sku: 'db-custom-8-30720', name: 'db-custom-8-30720 (8 vCPU, 30 GB RAM)', vcpu: 8.0, ram_gb: 30.0, base_monthly_usd: 394.20 }
+                ],
+                storage_rate_per_gb_month: 0.170,
+                ha_multiplier: 2.0,
+                cud_1yr_discount_pct: 25.0,
+                cud_3yr_discount_pct: 52.0
+            },
+            cloud_sql_enterprise_plus: {
+                name: 'Cloud SQL Enterprise Plus (MySQL/PostgreSQL - 99.99% SLA)',
+                engine: 'Enterprise Plus',
+                presets: [
+                    { sku: 'db-enterprise-plus-2-16', name: 'db-enterprise-plus-2-16 (2 vCPU, 16 GB RAM)', vcpu: 2.0, ram_gb: 16.0, base_monthly_usd: 164.25 },
+                    { sku: 'db-enterprise-plus-4-32', name: 'db-enterprise-plus-4-32 (4 vCPU, 32 GB RAM)', vcpu: 4.0, ram_gb: 32.0, base_monthly_usd: 328.50 },
+                    { sku: 'db-enterprise-plus-8-64', name: 'db-enterprise-plus-8-64 (8 vCPU, 64 GB RAM)', vcpu: 8.0, ram_gb: 64.0, base_monthly_usd: 657.00 }
+                ],
+                storage_rate_per_gb_month: 0.300,
+                ha_multiplier: 2.0,
+                cud_1yr_discount_pct: 25.0,
+                cud_3yr_discount_pct: 52.0
+            }
+        },
+        analytics_services: {
+            bigquery: {
+                name: 'Google BigQuery Serverless Data Warehouse',
+                analysis_on_demand_per_tb: 6.25,
+                free_tier_analysis_tb: 1.0,
+                editions: {
+                    standard: { name: 'BigQuery Standard Edition', rate_per_slot_hour: 0.040 },
+                    enterprise: { name: 'BigQuery Enterprise Edition', rate_per_slot_hour: 0.060, cud_1yr_discount_pct: 20.0, cud_3yr_discount_pct: 40.0 },
+                    enterprise_plus: { name: 'BigQuery Enterprise Plus Edition', rate_per_slot_hour: 0.100, cud_1yr_discount_pct: 25.0, cud_3yr_discount_pct: 45.0 }
+                },
+                storage: {
+                    active_storage_per_gb_month: 0.020,
+                    long_term_storage_per_gb_month: 0.010,
+                    free_tier_storage_gb: 10.0
+                }
+            }
+        },
+        networking_services: {
+            name: 'Google Cloud Global Network & Interconnect',
+            premium_tier: {
+                name: 'Premium Tier (High-performance global private fiber backbone)',
+                tiers: [
+                    { max_gb: 10000.0, rate_per_gb: 0.120, label: '0 - 10 TB (.12/GB)' },
+                    { max_gb: 50000.0, rate_per_gb: 0.110, label: '10 TB - 50 TB (.11/GB)' },
+                    { max_gb: null, rate_per_gb: 0.080, label: 'Over 50 TB (.08/GB)' }
+                ]
+            },
+            standard_tier: {
+                name: 'Standard Tier (Public ISP transit routing)',
+                rate_per_gb: 0.085
+            },
+            inter_region_egress: {
+                name: 'Inter-Region Egress (Within North America)',
+                rate_per_gb: 0.010
+            },
+            inter_continent_egress: {
+                name: 'Inter-Continent Egress (Cross-continent to EMEA/APAC)',
+                rate_per_gb: 0.080
+            },
+            ingress: {
+                name: 'Internet & Inter-region Ingress (Always Free)',
+                rate_per_gb: 0.000
+            }
         }
     },
-    'AWS': {
+        'AWS': {
         provider_key: 'AWS',
         name: 'Amazon Web Services (AWS)',
         brand_color: '#FF9900',
@@ -68,35 +176,72 @@ const HYPERSCALER_CATALOG = {
             'sa-east-1': { name: 'sa-east-1 (South America - São Paulo)', multiplier: 1.34 }
         },
         machine_presets: [
-            { sku: 't4g.nano', family: 't4g', name: 't4g.nano (2 vCPU burst, 0.5 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 0.5, base_monthly_usd: 3.07 },
-            { sku: 't4g.micro', family: 't4g', name: 't4g.micro (2 vCPU burst, 1 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 1.0, base_monthly_usd: 6.13 },
-            { sku: 't4g.small', family: 't4g', name: 't4g.small (2 vCPU burst, 2 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 2.0, base_monthly_usd: 12.26 },
-            { sku: 't4g.medium', family: 't4g', name: 't4g.medium (2 vCPU burst, 4 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 4.0, base_monthly_usd: 24.53 },
-            { sku: 'm6i.large', family: 'm6i', name: 'm6i.large (2 vCPU, 8 GB RAM - Intel Ice Lake)', vcpu: 2.0, ram_gb: 8.0, base_monthly_usd: 70.08 },
-            { sku: 'm6i.xlarge', family: 'm6i', name: 'm6i.xlarge (4 vCPU, 16 GB RAM - Intel Ice Lake)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 140.16 },
-            { sku: 'm6i.2xlarge', family: 'm6i', name: 'm6i.2xlarge (8 vCPU, 32 GB RAM - Intel Ice Lake)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 280.32 },
-            { sku: 'm6i.4xlarge', family: 'm6i', name: 'm6i.4xlarge (16 vCPU, 64 GB RAM - Intel Ice Lake)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 560.64 },
-            { sku: 'm6i.8xlarge', family: 'm6i', name: 'm6i.8xlarge (32 vCPU, 128 GB RAM - Intel Ice Lake)', vcpu: 32.0, ram_gb: 128.0, base_monthly_usd: 1121.28 },
-            { sku: 'm6g.xlarge', family: 'm6g', name: 'm6g.xlarge (4 vCPU, 16 GB RAM - Graviton2 ARM - 20% off)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 112.13 },
-            { sku: 'm6g.2xlarge', family: 'm6g', name: 'm6g.2xlarge (8 vCPU, 32 GB RAM - Graviton2 ARM - 20% off)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 224.26 },
-            { sku: 'c6i.xlarge', family: 'c6i', name: 'c6i.xlarge (4 vCPU, 8 GB RAM - Compute Optimized)', vcpu: 4.0, ram_gb: 8.0, base_monthly_usd: 124.10 },
-            { sku: 'c6i.2xlarge', family: 'c6i', name: 'c6i.2xlarge (8 vCPU, 16 GB RAM - Compute Optimized)', vcpu: 8.0, ram_gb: 16.0, base_monthly_usd: 248.20 },
-            { sku: 'r6i.xlarge', family: 'r6i', name: 'r6i.xlarge (4 vCPU, 32 GB RAM - Memory Optimized 8:1)', vcpu: 4.0, ram_gb: 32.0, base_monthly_usd: 183.96 },
-            { sku: 'r6i.2xlarge', family: 'r6i', name: 'r6i.2xlarge (8 vCPU, 64 GB RAM - Memory Optimized 8:1)', vcpu: 8.0, ram_gb: 64.0, base_monthly_usd: 367.92 }
+            // --- General Purpose (Intel Ice Lake, Graviton2/3 ARM) ---
+            { sku: 'm6i.large', family: 'm6i', category: 'General Purpose', name: 'm6i.large (2 vCPU, 8 GB RAM - Intel Ice Lake)', vcpu: 2.0, ram_gb: 8.0, base_monthly_usd: 70.08 },
+            { sku: 'm6i.xlarge', family: 'm6i', category: 'General Purpose', name: 'm6i.xlarge (4 vCPU, 16 GB RAM - Intel Ice Lake)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 140.16 },
+            { sku: 'm6i.2xlarge', family: 'm6i', category: 'General Purpose', name: 'm6i.2xlarge (8 vCPU, 32 GB RAM - Intel Ice Lake)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 280.32 },
+            { sku: 'm6i.4xlarge', family: 'm6i', category: 'General Purpose', name: 'm6i.4xlarge (16 vCPU, 64 GB RAM - Intel Ice Lake)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 560.64 },
+            { sku: 'm6i.8xlarge', family: 'm6i', category: 'General Purpose', name: 'm6i.8xlarge (32 vCPU, 128 GB RAM - Intel Ice Lake)', vcpu: 32.0, ram_gb: 128.0, base_monthly_usd: 1121.28 },
+            { sku: 'm6g.xlarge', family: 'm6g', category: 'General Purpose', name: 'm6g.xlarge (4 vCPU, 16 GB RAM - Graviton2 ARM - 20% off)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 112.13 },
+            { sku: 'm7g.xlarge', family: 'm7g', category: 'General Purpose', name: 'm7g.xlarge (4 vCPU, 16 GB RAM - Graviton3 ARM)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 119.14 },
+            // --- Burstable / Micro (Graviton2 & Intel Xeon) ---
+            { sku: 't4g.nano', family: 't4g', category: 'Burstable / Micro', name: 't4g.nano (2 vCPU burst, 0.5 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 0.5, base_monthly_usd: 3.07 },
+            { sku: 't4g.micro', family: 't4g', category: 'Burstable / Micro', name: 't4g.micro (2 vCPU burst, 1 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 1.0, base_monthly_usd: 6.13 },
+            { sku: 't4g.small', family: 't4g', category: 'Burstable / Micro', name: 't4g.small (2 vCPU burst, 2 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 2.0, base_monthly_usd: 12.26 },
+            { sku: 't4g.medium', family: 't4g', category: 'Burstable / Micro', name: 't4g.medium (2 vCPU burst, 4 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 4.0, base_monthly_usd: 24.53 },
+            { sku: 't4g.large', family: 't4g', category: 'Burstable / Micro', name: 't4g.large (2 vCPU burst, 8 GB RAM - Graviton2)', vcpu: 2.0, ram_gb: 8.0, base_monthly_usd: 49.06 },
+            { sku: 't4g.xlarge', family: 't4g', category: 'Burstable / Micro', name: 't4g.xlarge (4 vCPU burst, 16 GB RAM - Graviton2)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 98.11 },
+            { sku: 't3.medium', family: 't3', category: 'Burstable / Micro', name: 't3.medium (2 vCPU burst, 4 GB RAM - Intel Xeon)', vcpu: 2.0, ram_gb: 4.0, base_monthly_usd: 30.37 },
+            { sku: 't3.xlarge', family: 't3', category: 'Burstable / Micro', name: 't3.xlarge (4 vCPU burst, 16 GB RAM - Intel Xeon)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 121.47 },
+            // --- Compute Optimized (Intel Ice Lake & Graviton3) ---
+            { sku: 'c6i.large', family: 'c6i', category: 'Compute Optimized', name: 'c6i.large (2 vCPU, 4 GB RAM - Intel Ice Lake)', vcpu: 2.0, ram_gb: 4.0, base_monthly_usd: 62.05 },
+            { sku: 'c6i.xlarge', family: 'c6i', category: 'Compute Optimized', name: 'c6i.xlarge (4 vCPU, 8 GB RAM - Compute Optimized)', vcpu: 4.0, ram_gb: 8.0, base_monthly_usd: 124.10 },
+            { sku: 'c6i.2xlarge', family: 'c6i', category: 'Compute Optimized', name: 'c6i.2xlarge (8 vCPU, 16 GB RAM - Compute Optimized)', vcpu: 8.0, ram_gb: 16.0, base_monthly_usd: 248.20 },
+            { sku: 'c6i.4xlarge', family: 'c6i', category: 'Compute Optimized', name: 'c6i.4xlarge (16 vCPU, 32 GB RAM - Compute Optimized)', vcpu: 16.0, ram_gb: 32.0, base_monthly_usd: 496.40 },
+            { sku: 'c7g.xlarge', family: 'c7g', category: 'Compute Optimized', name: 'c7g.xlarge (4 vCPU, 8 GB RAM - Graviton3 ARM)', vcpu: 4.0, ram_gb: 8.0, base_monthly_usd: 105.49 },
+            // --- Memory Optimized (Intel Ice Lake 8:1 RAM-to-vCPU) ---
+            { sku: 'r6i.large', family: 'r6i', category: 'Memory Optimized', name: 'r6i.large (2 vCPU, 16 GB RAM - Memory Optimized 8:1)', vcpu: 2.0, ram_gb: 16.0, base_monthly_usd: 91.98 },
+            { sku: 'r6i.xlarge', family: 'r6i', category: 'Memory Optimized', name: 'r6i.xlarge (4 vCPU, 32 GB RAM - Memory Optimized 8:1)', vcpu: 4.0, ram_gb: 32.0, base_monthly_usd: 183.96 },
+            { sku: 'r6i.2xlarge', family: 'r6i', category: 'Memory Optimized', name: 'r6i.2xlarge (8 vCPU, 64 GB RAM - Memory Optimized 8:1)', vcpu: 8.0, ram_gb: 64.0, base_monthly_usd: 367.92 },
+            { sku: 'r6i.4xlarge', family: 'r6i', category: 'Memory Optimized', name: 'r6i.4xlarge (16 vCPU, 128 GB RAM - Memory Optimized 8:1)', vcpu: 16.0, ram_gb: 128.0, base_monthly_usd: 735.84 },
+            // --- GPU / Accelerated Computing ---
+            { sku: 'g5.xlarge', family: 'g5', category: 'GPU / Accelerated', name: 'g5.xlarge (4 vCPU, 16 GB RAM, 1x NVIDIA A10G 24GB)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 734.38 },
+            { sku: 'g5.2xlarge', family: 'g5', category: 'GPU / Accelerated', name: 'g5.2xlarge (8 vCPU, 32 GB RAM, 1x NVIDIA A10G 24GB)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 884.76 },
+            { sku: 'p4d.24xlarge', family: 'p4d', category: 'GPU / Accelerated', name: 'p4d.24xlarge (96 vCPU, 1152 GB RAM, 8x NVIDIA A100 40GB)', vcpu: 96.0, ram_gb: 1152.0, base_monthly_usd: 23923.99 }
         ],
         custom_rates: { vcpu_hourly: 0.0480, ram_hourly: 0.0060 },
         storage_disk_types: {
-            'gp3': { name: 'General Purpose SSD (gp3 - 3,000 IOPS baseline)', rate_per_gb_month: 0.080, note: 'Latest gen SSD with baseline 3,000 IOPS' },
-            'gp2': { name: 'General Purpose SSD (gp2)', rate_per_gb_month: 0.100, note: 'Legacy standard SSD with burstable baseline' },
-            'io2': { name: 'Provisioned IOPS SSD (io2 Block Express)', rate_per_gb_month: 0.125, note: 'Sub-millisecond latency for critical databases' },
-            'st1': { name: 'Throughput Optimized HDD (st1)', rate_per_gb_month: 0.045, note: 'Low-cost HDD for big data and log processing' },
-            'sc1': { name: 'Cold HDD (sc1)', rate_per_gb_month: 0.025, note: 'Lowest cost magnetic storage for cold data' }
+            'gp3': { name: 'General Purpose SSD (gp3 - $0.08/GB-mo base + 3,000 IOPS baseline)', rate_per_gb_month: 0.080, note: 'Latest gen general purpose SSD ($0.08/GB-mo base + 3,000 baseline IOPS & 125 MB/s)' },
+            'gp2': { name: 'General Purpose SSD legacy (gp2 - $0.10/GB-mo)', rate_per_gb_month: 0.100, note: 'Legacy standard SSD with burstable baseline ($0.10/GB-mo)' },
+            'io2': { name: 'Provisioned IOPS SSD (io2 Block Express - $0.125/GB-mo base)', rate_per_gb_month: 0.125, note: 'Sub-millisecond latency for mission-critical databases ($0.125/GB-mo base)' },
+            'st1': { name: 'Throughput Optimized HDD (st1 - $0.045/GB-mo)', rate_per_gb_month: 0.045, note: 'Low-cost HDD for big data, data warehousing and log processing ($0.045/GB-mo)' },
+            'sc1': { name: 'Cold HDD (sc1 - $0.025/GB-mo)', rate_per_gb_month: 0.025, note: 'Lowest cost magnetic storage for infrequently accessed sequential data ($0.025/GB-mo)' },
+            's3-standard': { name: 'Amazon S3 Standard Object Storage ($0.023/GB-mo)', rate_per_gb_month: 0.023, note: 'High-durability object storage for frequently accessed multi-tenant assets' },
+            's3-intelligent': { name: 'Amazon S3 Intelligent-Tiering ($0.021/GB-mo)', rate_per_gb_month: 0.021, note: 'Automated cost optimization across frequent and infrequent access tiers' },
+            's3-glacier-flexible': { name: 'Amazon S3 Glacier Flexible Retrieval ($0.0036/GB-mo)', rate_per_gb_month: 0.0036, note: 'Low-cost cold archive storage with flexible retrieval in minutes to hours' },
+            's3-glacier-deep-archive': { name: 'Amazon S3 Glacier Deep Archive ($0.00099/GB-mo)', rate_per_gb_month: 0.00099, note: 'Lowest-cost cloud object storage for compliance long-term data retention' }
         },
         commitment_discounts: {
-            'on_demand': { name: 'On-Demand (Pay-As-You-Go)', discount_pct: 0.0 },
-            '1yr_commitment': { name: '1-Year Compute Savings Plan (35% off)', discount_pct: 35.0 },
-            '3yr_commitment': { name: '3-Year Compute Savings Plan (55% off)', discount_pct: 55.0 },
-            'spot': { name: 'EC2 Spot Instances (~70% off)', discount_pct: 70.0 }
+            'on_demand': { name: 'On-Demand (Pay-As-You-Go - 0% discount)', discount_pct: 0.0 },
+            '1yr_savings_plan': { name: '1-Year Compute Savings Plan (28% discount)', discount_pct: 28.0 },
+            '1yr_commitment': { name: '1-Year Compute Savings Plan (28% discount)', discount_pct: 28.0 },
+            '3yr_savings_plan': { name: '3-Year Compute Savings Plan (45% discount)', discount_pct: 45.0 },
+            '3yr_commitment': { name: '3-Year Compute Savings Plan (45% discount)', discount_pct: 45.0 },
+            '1yr_ri': { name: '1-Year Standard EC2 Reserved Instance (37% discount)', discount_pct: 37.0 },
+            '3yr_ri': { name: '3-Year Standard EC2 Reserved Instance (60% discount)', discount_pct: 60.0 },
+            'spot': { name: 'EC2 Spot Instances (70-90% discount, avg 72%)', discount_pct: 72.0 }
+        },
+        database_services: {
+            'rds_m6i_large_single': { name: 'RDS PostgreSQL/MySQL (db.m6i.large - Single-AZ)', engine: 'PostgreSQL / MySQL', hourly_usd: 0.178, monthly_usd: 129.94 },
+            'rds_m6i_large_multiaz': { name: 'RDS PostgreSQL/MySQL (db.m6i.large - Multi-AZ HA)', engine: 'PostgreSQL / MySQL', hourly_usd: 0.356, monthly_usd: 259.88 },
+            'aurora_mysql': { name: 'Amazon Aurora MySQL (Multi-AZ Enterprise)', engine: 'Amazon Aurora MySQL', hourly_usd: 0.290, monthly_usd: 211.70 },
+            'aurora_postgresql': { name: 'Amazon Aurora PostgreSQL (Multi-AZ Enterprise)', engine: 'Amazon Aurora PostgreSQL', hourly_usd: 0.290, monthly_usd: 211.70 },
+            'dynamodb_on_demand': { name: 'Amazon DynamoDB (On-Demand Capacity)', wcu_per_million: 1.25, rcu_per_million: 0.25, storage_rate_per_gb_month: 0.25 },
+            'dynamodb_provisioned': { name: 'Amazon DynamoDB (Provisioned Capacity)', wcu_hourly: 0.00065, rcu_hourly: 0.00013, storage_rate_per_gb_month: 0.25 }
+        },
+        networking_services: {
+            'internet_egress': { name: 'AWS Data Transfer / Internet Outbound Egress', free_tier_gb: 100.0, rate_per_gb: 0.090 },
+            'inter_region_egress': { name: 'AWS Inter-Region Data Transfer', rate_per_gb: 0.020 }
         }
     },
     'Azure': {
@@ -110,46 +255,92 @@ const HYPERSCALER_CATALOG = {
             'westeurope': { name: 'westeurope (West Europe - Netherlands)', multiplier: 1.17 },
             'northeurope': { name: 'northeurope (North Europe - Ireland)', multiplier: 1.15 },
             'centralindia': { name: 'centralindia (Central India - Pune)', multiplier: 1.10 },
-            'southeastasia': { name: 'southeastasia (Southeast Asia - Singapore)', multiplier: 1.13 }
+            'southeastasia': { name: 'southeastasia (Southeast Asia - Singapore)', multiplier: 1.13 },
+            'centralus': { name: 'centralus (Central US - Iowa)', multiplier: 1.00 },
+            'uksouth': { name: 'uksouth (UK South - London)', multiplier: 1.16 }
         },
         machine_presets: [
+            // General Purpose Burstable (B-series)
             { sku: 'Standard_B1s', family: 'Standard_B', name: 'Standard_B1s (1 vCPU, 1 GB RAM - Burstable)', vcpu: 1.0, ram_gb: 1.0, base_monthly_usd: 7.59 },
             { sku: 'Standard_B2s', family: 'Standard_B', name: 'Standard_B2s (2 vCPU, 4 GB RAM - Burstable)', vcpu: 2.0, ram_gb: 4.0, base_monthly_usd: 30.37 },
             { sku: 'Standard_B4ms', family: 'Standard_B', name: 'Standard_B4ms (4 vCPU, 16 GB RAM - Burstable)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 121.47 },
+            // General Purpose (Dv5-series - Intel Xeon Ice Lake)
             { sku: 'Standard_D2s_v5', family: 'Standard_Dsv5', name: 'Standard_D2s_v5 (2 vCPU, 8 GB RAM - Intel Ice Lake)', vcpu: 2.0, ram_gb: 8.0, base_monthly_usd: 70.08 },
             { sku: 'Standard_D4s_v5', family: 'Standard_Dsv5', name: 'Standard_D4s_v5 (4 vCPU, 16 GB RAM - Intel Ice Lake)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 140.16 },
             { sku: 'Standard_D8s_v5', family: 'Standard_Dsv5', name: 'Standard_D8s_v5 (8 vCPU, 32 GB RAM - Intel Ice Lake)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 280.32 },
             { sku: 'Standard_D16s_v5', family: 'Standard_Dsv5', name: 'Standard_D16s_v5 (16 vCPU, 64 GB RAM - Intel Ice Lake)', vcpu: 16.0, ram_gb: 64.0, base_monthly_usd: 560.64 },
             { sku: 'Standard_D32s_v5', family: 'Standard_Dsv5', name: 'Standard_D32s_v5 (32 vCPU, 128 GB RAM - Intel Ice Lake)', vcpu: 32.0, ram_gb: 128.0, base_monthly_usd: 1121.28 },
+            // General Purpose AMD Milan (Dasv5-series)
             { sku: 'Standard_D4as_v5', family: 'Standard_Dasv5', name: 'Standard_D4as_v5 (4 vCPU, 16 GB RAM - AMD Milan - 12% off)', vcpu: 4.0, ram_gb: 16.0, base_monthly_usd: 123.37 },
             { sku: 'Standard_D8as_v5', family: 'Standard_Dasv5', name: 'Standard_D8as_v5 (8 vCPU, 32 GB RAM - AMD Milan - 12% off)', vcpu: 8.0, ram_gb: 32.0, base_monthly_usd: 246.74 },
+            // Memory Optimized (Ev5-series - 8:1 RAM ratio)
+            { sku: 'Standard_E2s_v5', family: 'Standard_Esv5', name: 'Standard_E2s_v5 (2 vCPU, 16 GB RAM - Memory Optimized)', vcpu: 2.0, ram_gb: 16.0, base_monthly_usd: 91.98 },
             { sku: 'Standard_E4s_v5', family: 'Standard_Esv5', name: 'Standard_E4s_v5 (4 vCPU, 32 GB RAM - Memory Optimized)', vcpu: 4.0, ram_gb: 32.0, base_monthly_usd: 183.96 },
             { sku: 'Standard_E8s_v5', family: 'Standard_Esv5', name: 'Standard_E8s_v5 (8 vCPU, 64 GB RAM - Memory Optimized)', vcpu: 8.0, ram_gb: 64.0, base_monthly_usd: 367.92 },
-            { sku: 'Standard_F4s_v2', family: 'Standard_Fsv2', name: 'Standard_F4s_v2 (4 vCPU, 8 GB RAM - Compute Intensive)', vcpu: 4.0, ram_gb: 8.0, base_monthly_usd: 123.00 }
+            { sku: 'Standard_E16s_v5', family: 'Standard_Esv5', name: 'Standard_E16s_v5 (16 vCPU, 128 GB RAM - Memory Optimized)', vcpu: 16.0, ram_gb: 128.0, base_monthly_usd: 735.84 },
+            // Compute Optimized (Fsv2-series - 3.7GHz Turbo)
+            { sku: 'Standard_F4s_v2', family: 'Standard_Fsv2', name: 'Standard_F4s_v2 (4 vCPU, 8 GB RAM - Compute Intensive)', vcpu: 4.0, ram_gb: 8.0, base_monthly_usd: 123.00 },
+            { sku: 'Standard_F8s_v2', family: 'Standard_Fsv2', name: 'Standard_F8s_v2 (8 vCPU, 16 GB RAM - Compute Intensive)', vcpu: 8.0, ram_gb: 16.0, base_monthly_usd: 246.01 },
+            { sku: 'Standard_F16s_v2', family: 'Standard_Fsv2', name: 'Standard_F16s_v2 (16 vCPU, 32 GB RAM - Compute Intensive)', vcpu: 16.0, ram_gb: 32.0, base_monthly_usd: 492.02 },
+            // GPU / AI Acceleration (NCas_T4_v3 - NVIDIA Tesla T4)
+            { sku: 'Standard_NC4as_T4_v3', family: 'Standard_NCas_T4', name: 'Standard_NC4as_T4_v3 (4 vCPU, 28 GB RAM, 1x NVIDIA T4 GPU)', vcpu: 4.0, ram_gb: 28.0, base_monthly_usd: 383.98 },
+            { sku: 'Standard_NC8as_T4_v3', family: 'Standard_NCas_T4', name: 'Standard_NC8as_T4_v3 (8 vCPU, 56 GB RAM, 1x NVIDIA T4 GPU)', vcpu: 8.0, ram_gb: 56.0, base_monthly_usd: 543.12 }
         ],
         custom_rates: { vcpu_hourly: 0.0475, ram_hourly: 0.0059 },
         storage_disk_types: {
-            'standard-hdd': { name: 'Standard HDD Managed Disk', rate_per_gb_month: 0.040, note: 'Low cost backup and non-critical dev/test' },
-            'standard-ssd': { name: 'Standard SSD Managed Disk', rate_per_gb_month: 0.075, note: 'Cost-effective SSD for web servers' },
-            'premium-ssd': { name: 'Premium SSD Managed Disk (P1-P80)', rate_per_gb_month: 0.135, note: 'High performance SSD for production I/O' },
-            'ultra-disk': { name: 'Ultra Disk Managed Storage', rate_per_gb_month: 0.220, note: 'Sub-millisecond latency for high-end SQL' }
+            'Standard_LRS': { name: 'Standard HDD Managed Disk (Standard_LRS)', rate_per_gb_month: 0.040, note: 'Low cost backup and non-critical dev/test' },
+            'standard-hdd': { name: 'Standard HDD Managed Disk (Standard_LRS)', rate_per_gb_month: 0.040, note: 'Low cost backup and non-critical dev/test' },
+            'StandardSSD_LRS': { name: 'Standard SSD Managed Disk (StandardSSD_LRS)', rate_per_gb_month: 0.075, note: 'Cost-effective SSD for web servers' },
+            'standard-ssd': { name: 'Standard SSD Managed Disk (StandardSSD_LRS)', rate_per_gb_month: 0.075, note: 'Cost-effective SSD for web servers' },
+            'Premium_LRS': { name: 'Premium SSD Managed Disk (Premium_LRS - P1-P80)', rate_per_gb_month: 0.135, note: 'High performance SSD for production I/O' },
+            'premium-ssd': { name: 'Premium SSD Managed Disk (Premium_LRS - P1-P80)', rate_per_gb_month: 0.135, note: 'High performance SSD for production I/O' },
+            'PremiumV2_LRS': { name: 'Premium SSD v2 Managed Disk (PremiumV2_LRS)', rate_per_gb_month: 0.115, note: 'Next-gen sub-ms disk with scalable IOPS' },
+            'premium-ssd-v2': { name: 'Premium SSD v2 Managed Disk (PremiumV2_LRS)', rate_per_gb_month: 0.115, note: 'Next-gen sub-ms disk with scalable IOPS' },
+            'UltraSSD_LRS': { name: 'Ultra Disk Managed Storage (UltraSSD_LRS)', rate_per_gb_month: 0.220, note: 'Sub-millisecond latency for high-end SQL' },
+            'ultra-disk': { name: 'Ultra Disk Managed Storage (UltraSSD_LRS)', rate_per_gb_month: 0.220, note: 'Sub-millisecond latency for high-end SQL' },
+            'blob-hot': { name: 'Azure Blob Storage (Hot Tier)', rate_per_gb_month: 0.018, note: 'Active data stored at low transaction cost' },
+            'blob-cool': { name: 'Azure Blob Storage (Cool Tier)', rate_per_gb_month: 0.010, note: 'Infrequently accessed data (30-day min)' },
+            'blob-cold': { name: 'Azure Blob Storage (Cold Tier)', rate_per_gb_month: 0.0036, note: 'Rarely accessed data (90-day min)' },
+            'blob-archive': { name: 'Azure Blob Storage (Archive Tier)', rate_per_gb_month: 0.00099, note: 'Long-term cold backup (180-day min)' }
         },
         commitment_discounts: {
-            'on_demand': { name: 'Pay-As-You-Go (0% off)', discount_pct: 0.0 },
-            '1yr_commitment': { name: '1-Year Reserved Virtual Machine (~35% off)', discount_pct: 35.0 },
-            '3yr_commitment': { name: '3-Year Reserved Virtual Machine (~55% off)', discount_pct: 55.0 },
-            'spot': { name: 'Azure Spot Virtual Machines (~70% off)', discount_pct: 70.0 }
+            'on_demand': { name: 'Pay-as-you-go (0% discount)', discount_pct: 0.0 },
+            '1yr_savings_plan': { name: '1-Year Savings Plan (38% discount)', discount_pct: 38.0 },
+            '3yr_savings_plan': { name: '3-Year Savings Plan (56% discount)', discount_pct: 56.0 },
+            '1yr_ri': { name: '1-Year Reserved Instance (42% discount)', discount_pct: 42.0 },
+            '3yr_ri': { name: '3-Year Reserved Instance (62% discount)', discount_pct: 62.0 },
+            '1yr_commitment': { name: '1-Year Reserved Instance (42% discount)', discount_pct: 42.0 },
+            '3yr_commitment': { name: '3-Year Reserved Instance (62% discount)', discount_pct: 62.0 },
+            'spot': { name: 'Spot Instances (80% discount)', discount_pct: 80.0 }
+        },
+        database_services: {
+            'azure_sql_vcore': { name: 'Azure SQL Database (vCore Gen5 Model)', compute_rate_per_vcore_hour: 0.252, storage_rate_per_gb_month: 0.115, ahb_discount_pct: 48.0 },
+            'azure_sql_dtu': { name: 'Azure SQL Database (Standard DTU Model)', rate_per_dtu_month: 0.020, storage_rate_per_gb_month: 0.100 },
+            'cosmos_db_ru': { name: 'Azure Cosmos DB (Provisioned RU/s)', rate_per_100_ru_hour: 0.008, storage_rate_per_gb_month: 0.250 },
+            'cosmos_db_serverless': { name: 'Azure Cosmos DB (Serverless)', rate_per_million_ru: 0.250, storage_rate_per_gb_month: 0.250 }
+        },
+        networking_services: {
+            'internet_egress': { name: 'Azure Internet Egress Bandwidth', free_tier_gb: 100.0, rate_per_gb_baseline: 0.087 },
+            'inter_region_egress': { name: 'Azure Inter-Region Egress Bandwidth', rate_per_gb: 0.020 }
         }
     }
 };
 
+const HYPERSCALER_PRICING_CATALOG = HYPERSCALER_CATALOG;
+
 const LOCAL_CATALOG = {
-    'AWS': {
+        'AWS': {
         families: [
             { code: 'm6i', name: 'm6i (General Purpose - Intel Xeon Ice Lake)', note: 'Intel x86_64 Base' },
             { code: 'm6g', name: 'm6g (AWS Graviton2 ARM - 20% Cheaper)', note: 'Graviton ARM64 (-20%)' },
+            { code: 'm7g', name: 'm7g (AWS Graviton3 ARM - Next-Gen Efficiency)', note: 'Graviton3 ARM64' },
+            { code: 't4g', name: 't4g (Burstable - AWS Graviton2 Efficiency)', note: 'Burstable ARM64' },
+            { code: 't3', name: 't3 (Burstable - Intel Xeon Scalable)', note: 'Burstable x86' },
             { code: 'c6i', name: 'c6i (Compute Optimized - High Clock)', note: 'Compute Heavy' },
-            { code: 'r6i', name: 'r6i (Memory Optimized - 8:1 RAM-to-CPU)', note: 'RAM Intensive' }
+            { code: 'c7g', name: 'c7g (Compute Optimized - Graviton3 Turbo)', note: 'Graviton3 Compute' },
+            { code: 'r6i', name: 'r6i (Memory Optimized - 8:1 RAM-to-CPU)', note: 'RAM Intensive' },
+            { code: 'g5', name: 'g5 (GPU Accelerated - NVIDIA A10G 24GB)', note: 'AI Inference / Graphics' },
+            { code: 'p4d', name: 'p4d (GPU Supercomputing - 8x NVIDIA A100)', note: 'LLM Training / HPC' }
         ],
         regions: [
             { code: 'us-east-1', name: 'us-east-1 (US East - N. Virginia)', mult: '1.00x', note: 'Global Baseline' },
@@ -163,10 +354,12 @@ const LOCAL_CATALOG = {
     },
     'Azure': {
         families: [
-            { code: 'Standard_Dsv5', name: 'Standard_Dsv5 (General Purpose - Intel/AMD)', note: 'Azure Standard Tier' },
+            { code: 'Standard_Dsv5', name: 'Standard_Dsv5 (General Purpose - Intel Xeon Ice Lake)', note: 'Azure Standard Tier' },
             { code: 'Standard_B', name: 'Standard_B (Burstable Economy - 25% Cheaper)', note: 'Dev / Burstable (-25%)' },
-            { code: 'Standard_Dasv5', name: 'Standard_Dasv5 (AMD EPYC Balanced)', note: 'AMD EPYC Milan (-12%)' },
-            { code: 'Standard_Esv5', name: 'Standard_Esv5 (Memory Optimized - 8:1 RAM)', note: 'Enterprise In-Memory' }
+            { code: 'Standard_Dasv5', name: 'Standard_Dasv5 (AMD EPYC Milan Balanced)', note: 'AMD EPYC Milan (-12%)' },
+            { code: 'Standard_Esv5', name: 'Standard_Esv5 (Memory Optimized - 8:1 RAM)', note: 'Enterprise In-Memory' },
+            { code: 'Standard_Fsv2', name: 'Standard_Fsv2 (Compute Intensive - 3.7GHz Turbo)', note: 'Compute Heavy' },
+            { code: 'Standard_NCas_T4', name: 'Standard_NCas_T4_v3 (GPU/AI Acceleration - NVIDIA T4)', note: 'AI/Deep Learning' }
         ],
         regions: [
             { code: 'eastus', name: 'eastus (East US - Virginia)', mult: '1.00x', note: 'Azure East Baseline' },

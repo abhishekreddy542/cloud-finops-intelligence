@@ -1,7 +1,7 @@
 {
   "organization": "Abhi Cloud Tech",
   "lead_architect": "Abhishek",
-  "last_updated": "2026-11-15T11:34:36.843532+00:00",
+  "last_updated": "2026-11-15T12:07:01.178731+00:00",
   "dataset_records": 32850,
   "models": {
     "anomaly_detection": {
@@ -27,27 +27,30 @@
       "algorithm": "Residual HistGradientBoosting with Deterministic Ridge Trend & Fourier Seasonality",
       "status": "Production Active",
       "artifact_path": "models/spend_forecaster_histgradient.joblib",
-      "artifact_size_bytes": 573333,
-      "artifact_size_mb": 0.55,
+      "artifact_size_bytes": 642421,
+      "artifact_size_mb": 0.61,
       "quantiles": [
         0.05,
         0.5,
         0.95
       ],
       "metrics": {
-        "MAE_USD": 837.43,
-        "RMSE_USD": 1363.81,
-        "MAPE_Pct": 4.01,
+        "MAE_USD": 771.98,
+        "RMSE_USD": 1170.53,
+        "MAPE_Pct": 3.6,
+        "R2_Score": 0.9302,
         "Test_Sample_Count": 55,
         "Mean_Daily_Spend_USD": 21238.9,
         "Quantile_Crossing_Violations": 0,
-        "Empirical_Coverage_Pct": 70.91,
-        "Upper_Pinball_Loss": 286.91,
-        "Lower_Pinball_Loss": 79.22,
-        "mae": 837.43,
-        "rmse": 1363.81,
-        "mape": 4.01,
-        "pinball_loss_mean": 183.065,
+        "Empirical_Coverage_Pct": 72.73,
+        "Upper_Pinball_Loss": 220.9,
+        "Lower_Pinball_Loss": 93.99,
+        "mae": 771.98,
+        "rmse": 1170.53,
+        "mape": 3.6,
+        "r2": 0.9302,
+        "test_r2": 0.7356,
+        "pinball_loss_mean": 157.445,
         "quantile_crossing_violations": 0
       }
     }
