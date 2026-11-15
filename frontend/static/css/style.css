@@ -73,3 +73,452 @@ header .whitespace-nowrap {
 .apexcharts-datalabels, .apexcharts-datalabel, .apexcharts-data-labels {
     pointer-events: none;
 }
+
+/* ==========================================================================
+   Executive White & Blue Light Theme Architecture
+   ========================================================================== */
+
+html.light {
+    color-scheme: light;
+}
+
+html.light:root {
+    --bg-base: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8fafc;
+    --bg-card-terminal: #f1f5f9;
+
+    --border-card: #e2e8f0;
+    --border-card-hover: rgba(2, 132, 199, 0.4);
+    --border-card-glow: rgba(2, 132, 199, 0.12);
+    --border-subtle: #e2e8f0;
+
+    /* Cloud Provider Brand Identity on Light */
+    --color-aws: #d97706;
+    --color-aws-glow: rgba(217, 119, 6, 0.2);
+    --color-aws-bg: #fffbeb;
+    --color-aws-border: #fcd34d;
+
+    --color-azure: #0284c7;
+    --color-azure-glow: rgba(2, 132, 199, 0.2);
+    --color-azure-bg: #f0f9ff;
+    --color-azure-border: #7dd3fc;
+
+    --color-gcp: #059669;
+    --color-gcp-glow: rgba(5, 150, 105, 0.2);
+    --color-gcp-bg: #ecfdf5;
+    --color-gcp-border: #6ee7b7;
+
+    /* Executive Accents */
+    --accent-sky: #0284c7;
+    --accent-blue: #2563eb;
+    --accent-indigo: #4f46e5;
+    --accent-emerald: #059669;
+    --accent-rose: #e11d48;
+    --accent-amber: #d97706;
+    --accent-purple: #7c3aed;
+
+    /* High-Contrast Typography on Light */
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --text-faint: #94a3b8;
+}
+
+/* Base Body Surface */
+html.light body {
+    background-color: #f8fafc !important;
+    background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(2, 132, 199, 0.08), transparent 70%),
+        radial-gradient(circle 600px at 100% 0%, rgba(37, 99, 235, 0.05), transparent),
+        radial-gradient(circle 500px at 0% 100%, rgba(16, 185, 129, 0.04), transparent) !important;
+    color: #0f172a !important;
+}
+
+/* Sidebar Navigation in Light Mode */
+html.light aside {
+    background-color: #ffffff !important;
+    border-right-color: #e2e8f0 !important;
+    box-shadow: 2px 0 16px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.light aside .border-b,
+html.light aside .border-t {
+    border-color: #e2e8f0 !important;
+}
+
+html.light aside .bg-slate-950\/60,
+html.light aside .bg-slate-950 {
+    background-color: #f8fafc !important;
+}
+
+html.light .nav-link {
+    color: #475569 !important;
+}
+
+html.light .nav-link:hover {
+    background: #f1f5f9 !important;
+    color: #0284c7 !important;
+    border-color: #e2e8f0 !important;
+}
+
+html.light .nav-link.active {
+    background: linear-gradient(90deg, rgba(2, 132, 199, 0.12) 0%, rgba(2, 132, 199, 0.03) 100%) !important;
+    color: #0284c7 !important;
+    border: 1px solid rgba(2, 132, 199, 0.35) !important;
+    box-shadow: 0 2px 10px rgba(2, 132, 199, 0.1) !important;
+}
+
+html.light .nav-link.active i {
+    color: #0284c7 !important;
+    filter: none !important;
+}
+
+/* Top App Bar in Light Mode */
+html.light header#topAppBar {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom-color: #e2e8f0 !important;
+    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05) !important;
+}
+
+html.light header#topAppBar .bg-slate-900\/80,
+html.light header#topAppBar .bg-slate-900\/90,
+html.light header#topAppBar .bg-slate-900 {
+    background-color: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #334155 !important;
+}
+
+/* Glass Panels & Surface Containers */
+html.light .glass-panel {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px 0 rgba(15, 23, 42, 0.03) !important;
+}
+
+html.light .glass-panel:hover {
+    border-color: #bae6fd !important;
+    box-shadow: 0 10px 25px -4px rgba(2, 132, 199, 0.12) !important;
+}
+
+/* KPI Metric Cards in Light Mode */
+html.light .kpi-card {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.03) !important;
+}
+
+html.light .kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.1) !important;
+}
+
+html.light .kpi-card::after {
+    opacity: 0.04 !important;
+}
+
+/* Financial Terminal & Calculators */
+html.light .financial-terminal {
+    background: #ffffff !important;
+    border-color: #bae6fd !important;
+    box-shadow: 0 12px 30px -8px rgba(2, 132, 199, 0.1) !important;
+}
+
+html.light .terminal-header {
+    background: #f0f9ff !important;
+    border-bottom-color: #e0f2fe !important;
+}
+
+html.light .terminal-metric-pod {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
+html.light .terminal-metric-pod:hover {
+    border-color: #93c5fd !important;
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.08) !important;
+}
+
+html.light .terminal-metric-pod.highlight-savings {
+    background: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+}
+
+html.light .terminal-input-group {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+}
+
+html.light .terminal-select {
+    color: #0f172a !important;
+}
+
+html.light .terminal-select option {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+
+/* Form Controls, Inputs & Selects */
+html.light select,
+html.light input[type="text"],
+html.light input[type="number"],
+html.light input[type="password"] {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+
+html.light select:focus,
+html.light input:focus {
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+html.light select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+/* Typography Overrides on Light Surfaces */
+html.light .text-white:not([class*="bg-sky"]):not([class*="bg-blue"]):not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-amber"]):not([class*="bg-rose"]):not([class*="from-"]):not(.keep-white) {
+    color: #0f172a !important;
+}
+
+html.light .text-slate-100 {
+    color: #0f172a !important;
+}
+
+html.light .text-slate-200 {
+    color: #1e293b !important;
+}
+
+html.light .text-slate-300 {
+    color: #334155 !important;
+}
+
+html.light .text-slate-400 {
+    color: #64748b !important;
+}
+
+html.light .text-slate-500 {
+    color: #64748b !important;
+}
+
+/* Surface Background Overrides */
+html.light .bg-slate-950,
+html.light .bg-slate-900,
+html.light .bg-slate-850 {
+    background-color: #ffffff !important;
+}
+
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/70,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/70,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/90 {
+    background-color: #ffffff !important;
+}
+
+html.light .bg-slate-800,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/80 {
+    background-color: #f1f5f9 !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-700,
+html.light .border-slate-800\/60,
+html.light .border-slate-800\/80,
+html.light .border-slate-700\/80 {
+    border-color: #e2e8f0 !important;
+}
+
+/* Tables in Light Mode */
+html.light table {
+    border-color: #e2e8f0 !important;
+}
+
+html.light thead th {
+    background: #f8fafc !important;
+    color: #475569 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html.light tbody tr {
+    border-bottom-color: #f1f5f9 !important;
+}
+
+html.light tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+html.light tbody td {
+    color: #1e293b !important;
+}
+
+/* Dropzone in Light Mode */
+html.light #dropZone {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+}
+
+html.light #dropZone:hover {
+    background-color: #f0f9ff !important;
+    border-color: #0284c7 !important;
+}
+
+/* Cloud Platform Action Cards & Badges in Light Mode */
+html.light .badge-prov-aws {
+    background: #fffbeb !important;
+    color: #b45309 !important;
+    border-color: #fcd34d !important;
+}
+
+html.light .badge-prov-azure {
+    background: #f0f9ff !important;
+    color: #0369a1 !important;
+    border-color: #7dd3fc !important;
+}
+
+html.light .badge-prov-gcp {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border-color: #6ee7b7 !important;
+}
+
+/* Cloud Calculator Selection Buttons */
+html.light .calc-cloud-btn {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+html.light .calc-cloud-btn:hover {
+    background-color: #f8fafc !important;
+}
+
+html.light .calc-cloud-btn.border-emerald-500,
+html.light #btnSelectCloudGcp.border-emerald-500 {
+    background-color: #ecfdf5 !important;
+    border-color: #059669 !important;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.15) !important;
+}
+
+html.light .calc-cloud-btn.border-amber-500,
+html.light #btnSelectCloudAws.border-amber-500 {
+    background-color: #fffbeb !important;
+    border-color: #d97706 !important;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.15) !important;
+}
+
+html.light .calc-cloud-btn.border-sky-500,
+html.light #btnSelectCloudAzure.border-sky-500 {
+    background-color: #f0f9ff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15) !important;
+}
+
+/* Severity Badges in Light Mode */
+html.light .badge-critical {
+    background: #ffe4e6 !important;
+    color: #be123c !important;
+    border-color: #fecdd3 !important;
+}
+
+html.light .badge-high {
+    background: #fef3c7 !important;
+    color: #b45309 !important;
+    border-color: #fde68a !important;
+}
+
+html.light .badge-medium {
+    background: #e0e7ff !important;
+    color: #4338ca !important;
+    border-color: #c7d2fe !important;
+}
+
+html.light .badge-normal {
+    background: #d1fae5 !important;
+    color: #047857 !important;
+    border-color: #a7f3d0 !important;
+}
+
+/* Filter Chips in Light Mode */
+html.light .severity-chip,
+html.light .platform-chip {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    color: #475569 !important;
+}
+
+html.light .severity-chip:hover,
+html.light .platform-chip:hover {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+html.light .severity-chip.active,
+html.light .platform-chip.active {
+    background: #f0f9ff !important;
+    border-color: #0284c7 !important;
+    color: #0284c7 !important;
+}
+
+/* Modals & Dialogs in Light Mode */
+html.light #authGate > div.max-w-md {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15) !important;
+}
+
+html.light #authGate .bg-slate-950,
+html.light #authGate .bg-slate-900 {
+    background: #ffffff !important;
+}
+
+/* Sliders in Light Mode */
+html.light input[type=range] {
+    background: #e2e8f0 !important;
+}
+
+html.light input[type=range]::-webkit-slider-thumb {
+    background: #0284c7 !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(2, 132, 199, 0.4) !important;
+}
+
+/* ApexCharts Light Mode Overrides */
+html.light .apexcharts-tooltip {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1) !important;
+    color: #0f172a !important;
+}
+
+html.light .apexcharts-tooltip-title {
+    background: #f8fafc !important;
+    border-bottom-color: #e2e8f0 !important;
+    color: #0284c7 !important;
+}
+
+html.light .apexcharts-xaxistooltip,
+html.light .apexcharts-yaxistooltip {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+html.light ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

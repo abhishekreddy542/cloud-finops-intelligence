@@ -15,6 +15,26 @@ const CLOUD_COLORS = {
 const Charts = {
     instances: {},
 
+    isLightMode() {
+        return document.documentElement.classList.contains('light') || 
+               document.documentElement.getAttribute('data-theme') === 'light';
+    },
+
+    getTheme() {
+        const isLight = this.isLightMode();
+        return {
+            isLight: isLight,
+            text: isLight ? '#475569' : '#94a3b8',
+            titleText: isLight ? '#0f172a' : '#f8fafc',
+            grid: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.04)',
+            tooltipTheme: isLight ? 'light' : 'dark',
+            cardBg: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.95)',
+            cardBorder: isLight ? '#cbd5e1' : 'rgba(56, 189, 248, 0.25)',
+            subText: isLight ? '#64748b' : '#94a3b8',
+            hoverBg: isLight ? '#f1f5f9' : '#1e293b'
+        };
+    },
+
     destroyAll() {
         Object.keys(this.instances).forEach(key => {
             if (this.instances[key]) {
@@ -27,6 +47,7 @@ const Charts = {
     // 1. Daily Multi-Cloud Spend Chart with Provider-Color-Coded Lines & Anomaly Markers
     renderDailySpend(containerId, trendsData) {
         if (this.instances[containerId]) this.instances[containerId].destroy();
+        const theme = this.getTheme();
 
         const dailyByProv = trendsData.daily_by_provider || [];
         const anomalies = trendsData.anomalies_summary || [];
@@ -60,7 +81,7 @@ const Charts = {
                 marker: {
                     size: 5,
                     fillColor: provColor,
-                    strokeColor: '#030712',
+                    strokeColor: theme.isLight ? '#ffffff' : '#030712',
                     strokeWidth: 2,
                     shape: 'circle'
                 },
@@ -68,8 +89,8 @@ const Charts = {
                     borderColor: 'rgba(244, 63, 94, 0.4)',
                     offsetY: -6,
                     style: {
-                        color: '#f8fafc',
-                        background: 'rgba(15, 23, 42, 0.92)',
+                        color: theme.isLight ? '#0f172a' : '#f8fafc',
+                        background: theme.isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.92)',
                         fontSize: '10px',
                         fontFamily: 'JetBrains Mono',
                         fontWeight: 600,
@@ -115,7 +136,7 @@ const Charts = {
             xaxis: {
                 categories: dates,
                 labels: {
-                    style: { colors: '#94a3b8', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: theme.text, fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     rotate: -20,
                     hideOverlappingLabels: true
                 },
@@ -124,19 +145,19 @@ const Charts = {
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#94a3b8', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: theme.subText, fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => `$${Math.round(val).toLocaleString()}`
                 }
             },
             grid: {
-                borderColor: 'rgba(255, 255, 255, 0.04)',
+                borderColor: theme.grid,
                 strokeDashArray: 3,
                 xaxis: { lines: { show: false } },
                 yaxis: { lines: { show: true } }
             },
             legend: {
                 position: 'top',
-                labels: { colors: '#94a3b8' },
+                labels: { colors: theme.text },
                 fontSize: '12px',
                 markers: { radius: 12 }
             },
@@ -144,7 +165,7 @@ const Charts = {
                 points: anomalyPoints
             },
             tooltip: {
-                theme: 'dark',
+                theme: theme.tooltipTheme,
                 shared: true,
                 intersect: false,
                 custom: function({ series, seriesIndex, dataPointIndex, w }) {
@@ -156,39 +177,45 @@ const Charts = {
 
                     const matchedAnom = anomalies.find(a => a.Date === date);
 
-                    let html = `<div class="p-3 bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md min-w-[220px] text-xs font-sans">`;
-                    html += `<div class="font-mono text-slate-400 font-semibold mb-2 pb-1.5 border-b border-slate-800/80 flex items-center justify-between">
-                                <span class="text-white">${date}</span>
-                                <span class="text-[10px] text-sky-400 font-mono tracking-wider">DAILY TOTAL</span>
+                    const bgClass = theme.isLight ? 'bg-white border-slate-200 text-slate-800 shadow-xl' : 'bg-slate-900/95 border-slate-700/80 text-white shadow-2xl';
+                    const borderHeaderClass = theme.isLight ? 'border-slate-200 text-slate-500' : 'border-slate-800/80 text-slate-400';
+                    const itemLabelClass = theme.isLight ? 'text-slate-600' : 'text-slate-300';
+                    const itemValClass = theme.isLight ? 'text-slate-900' : 'text-white';
+                    const totalRowBorder = theme.isLight ? 'border-slate-200 text-slate-700' : 'border-slate-800/80 text-slate-200';
+
+                    let html = `<div class="p-3 ${bgClass} border rounded-xl backdrop-blur-md min-w-[220px] text-xs font-sans">`;
+                    html += `<div class="font-mono ${borderHeaderClass} font-semibold mb-2 pb-1.5 border-b flex items-center justify-between">
+                                <span class="${itemValClass}">${date}</span>
+                                <span class="text-[10px] text-sky-500 font-mono tracking-wider">DAILY TOTAL</span>
                              </div>`;
                     
                     html += `<div class="space-y-1.5 mb-2">
                                 <div class="flex items-center justify-between gap-4">
-                                    <span class="flex items-center gap-1.5 text-slate-300">
+                                    <span class="flex items-center gap-1.5 ${itemLabelClass}">
                                         <span class="w-2 h-2 rounded-full" style="background:#FF9900"></span>
                                         <span>AWS Spend</span>
                                     </span>
-                                    <span class="font-mono font-bold text-white">$${(awsVal || 0).toLocaleString()}</span>
+                                    <span class="font-mono font-bold ${itemValClass}">$${(awsVal || 0).toLocaleString()}</span>
                                 </div>
                                 <div class="flex items-center justify-between gap-4">
-                                    <span class="flex items-center gap-1.5 text-slate-300">
+                                    <span class="flex items-center gap-1.5 ${itemLabelClass}">
                                         <span class="w-2 h-2 rounded-full" style="background:#0284C7"></span>
                                         <span>Azure Spend</span>
                                     </span>
-                                    <span class="font-mono font-bold text-white">$${(azureVal || 0).toLocaleString()}</span>
+                                    <span class="font-mono font-bold ${itemValClass}">$${(azureVal || 0).toLocaleString()}</span>
                                 </div>
                                 <div class="flex items-center justify-between gap-4">
-                                    <span class="flex items-center gap-1.5 text-slate-300">
+                                    <span class="flex items-center gap-1.5 ${itemLabelClass}">
                                         <span class="w-2 h-2 rounded-full" style="background:#10B981"></span>
                                         <span>GCP Spend</span>
                                     </span>
-                                    <span class="font-mono font-bold text-white">$${(gcpVal || 0).toLocaleString()}</span>
+                                    <span class="font-mono font-bold ${itemValClass}">$${(gcpVal || 0).toLocaleString()}</span>
                                 </div>
                              </div>`;
 
-                    html += `<div class="pt-1.5 border-t border-slate-800/80 flex items-center justify-between font-semibold text-slate-200">
+                    html += `<div class="pt-1.5 border-t ${totalRowBorder} flex items-center justify-between font-semibold">
                                 <span>Total Expenditure</span>
-                                <span class="font-mono font-bold text-sky-400">$${totalVal.toLocaleString()}</span>
+                                <span class="font-mono font-bold text-sky-600 dark:text-sky-400">$${totalVal.toLocaleString()}</span>
                              </div>`;
 
                     if (matchedAnom) {
@@ -212,6 +239,7 @@ const Charts = {
     // 2. Cloud Provider Allocation Donut (AWS: Orange, Azure: Blue, GCP: Green)
     renderProviderDonut(containerId, providerBreakdown) {
         if (this.instances[containerId]) this.instances[containerId].destroy();
+        const theme = this.getTheme();
 
         const labels = providerBreakdown.map(p => p.CloudProvider);
         const series = providerBreakdown.map(p => Math.round(p.DailyCost_USD));
@@ -229,7 +257,7 @@ const Charts = {
             stroke: { width: 0 },
             legend: {
                 position: 'bottom',
-                labels: { colors: '#94a3b8' },
+                labels: { colors: theme.text },
                 fontSize: '12px'
             },
             plotOptions: {
@@ -241,13 +269,13 @@ const Charts = {
                             total: {
                                 show: true,
                                 label: 'Multi-Cloud Spend',
-                                color: '#94a3b8',
+                                color: theme.subText,
                                 fontSize: '11px',
                                 fontWeight: 700,
                                 formatter: w => '$' + w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString()
                             },
                             value: {
-                                color: '#f8fafc',
+                                color: theme.titleText,
                                 fontSize: '22px',
                                 fontWeight: 800,
                                 fontFamily: 'JetBrains Mono',
@@ -259,7 +287,7 @@ const Charts = {
             },
             dataLabels: { enabled: false },
             tooltip: {
-                theme: 'dark',
+                theme: theme.tooltipTheme,
                 y: { formatter: val => '$' + val.toLocaleString() }
             }
         };
@@ -272,6 +300,7 @@ const Charts = {
     // 3. Department Breakdown Stacked Bar Chart
     renderDepartmentSpend(containerId, departmentSpend) {
         if (this.instances[containerId]) this.instances[containerId].destroy();
+        const theme = this.getTheme();
 
         const depts = [...new Set(departmentSpend.map(d => d.Department))];
         const providers = ['AWS', 'Azure', 'GCP'];
@@ -309,27 +338,27 @@ const Charts = {
             xaxis: {
                 categories: depts,
                 labels: {
-                    style: { colors: '#94a3b8', fontSize: '11px' },
+                    style: { colors: theme.text, fontSize: '11px' },
                     rotate: -20
                 },
                 axisBorder: { show: false }
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: theme.subText, fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => '$' + Math.round(val).toLocaleString()
                 }
             },
             grid: {
-                borderColor: 'rgba(255, 255, 255, 0.05)',
+                borderColor: theme.grid,
                 strokeDashArray: 4
             },
             legend: {
                 position: 'top',
-                labels: { colors: '#94a3b8' }
+                labels: { colors: theme.text }
             },
             tooltip: {
-                theme: 'dark',
+                theme: theme.tooltipTheme,
                 y: { formatter: val => '$' + val.toLocaleString() }
             }
         };
@@ -342,6 +371,7 @@ const Charts = {
     // 4. Top Services Horizontal Bar
     renderTopServices(containerId, topServices) {
         if (this.instances[containerId]) this.instances[containerId].destroy();
+        const theme = this.getTheme();
 
         const categories = topServices.map(s => s.Service);
         const data = topServices.map(s => Math.round(s.DailyCost_USD));
@@ -371,21 +401,21 @@ const Charts = {
             xaxis: {
                 categories: categories,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: theme.subText, fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => '$' + Math.round(val).toLocaleString()
                 }
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#94a3b8', fontSize: '11px', fontWeight: 600 }
+                    style: { colors: theme.text, fontSize: '11px', fontWeight: 600 }
                 }
             },
             grid: {
-                borderColor: 'rgba(255, 255, 255, 0.05)',
+                borderColor: theme.grid,
                 strokeDashArray: 4
             },
             tooltip: {
-                theme: 'dark',
+                theme: theme.tooltipTheme,
                 y: { formatter: val => '$' + val.toLocaleString() }
             }
         };
@@ -414,6 +444,8 @@ const Charts = {
         const lowerData = new Array(historical.length - 1).fill(null);
         lowerData.push(lastHistVal);
         forecast.forEach(f => lowerData.push(f.Lower_Bound_95_USD));
+
+        const theme = this.getTheme();
 
         const options = {
             series: [
@@ -457,7 +489,7 @@ const Charts = {
             xaxis: {
                 categories: allDates,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: theme.subText, fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     rotate: -20,
                     hideOverlappingLabels: true
                 },
@@ -465,20 +497,20 @@ const Charts = {
             },
             yaxis: {
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: theme.subText, fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => val ? `$${Math.round(val).toLocaleString()}` : ''
                 }
             },
             grid: {
-                borderColor: 'rgba(255, 255, 255, 0.05)',
+                borderColor: theme.grid,
                 strokeDashArray: 4
             },
             legend: {
                 position: 'top',
-                labels: { colors: '#94a3b8' }
+                labels: { colors: theme.text }
             },
             tooltip: {
-                theme: 'dark',
+                theme: theme.tooltipTheme,
                 y: {
                     formatter: val => val !== null && val !== undefined ? `$${Math.round(val).toLocaleString()}` : ''
                 }
@@ -507,6 +539,8 @@ const Charts = {
             portfolio.Storage_Optimization_Savings_USD
         ];
 
+        const theme = this.getTheme();
+
         const options = {
             series: [{
                 name: 'Identified Annual Savings ($)',
@@ -532,19 +566,19 @@ const Charts = {
             xaxis: {
                 categories: categories,
                 labels: {
-                    style: { colors: '#64748b', fontSize: '11px', fontFamily: 'JetBrains Mono' },
+                    style: { colors: theme.subText, fontSize: '11px', fontFamily: 'JetBrains Mono' },
                     formatter: val => '$' + Math.round(val).toLocaleString()
                 }
             },
             yaxis: {
-                labels: { style: { colors: '#94a3b8', fontSize: '11px', fontWeight: 600 } }
+                labels: { style: { colors: theme.text, fontSize: '11px', fontWeight: 600 } }
             },
             grid: {
-                borderColor: 'rgba(255, 255, 255, 0.05)',
+                borderColor: theme.grid,
                 strokeDashArray: 4
             },
             tooltip: {
-                theme: 'dark',
+                theme: theme.tooltipTheme,
                 y: { formatter: val => '$' + val.toLocaleString() }
             }
         };

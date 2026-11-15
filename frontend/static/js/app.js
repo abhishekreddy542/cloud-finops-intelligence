@@ -197,6 +197,7 @@ const LOCAL_CATALOG = {
 
 const App = {
     state: {
+        theme: 'dark',
         activeTab: 'overview',
         providers: [],
         departments: [],
@@ -274,6 +275,7 @@ const App = {
     },
 
     async init() {
+        this.initTheme();
         this.startClock();
         this.updateFamilyDropdown('AWS');
         this.updateRegionDropdown('AWS');
@@ -285,6 +287,85 @@ const App = {
             await this.fetchDatasetStatus();
             await this.loadFilterMetadata();
             await this.refreshDashboard();
+        }
+    },
+
+    initTheme() {
+        let saved = 'dark';
+        try {
+            saved = localStorage.getItem('act_theme') || 'dark';
+        } catch (e) {}
+        this.setTheme(saved, false);
+    },
+
+    toggleTheme() {
+        const current = this.state.theme || (document.documentElement.classList.contains('light') ? 'light' : 'dark');
+        const next = current === 'dark' ? 'light' : 'dark';
+        this.setTheme(next, true);
+    },
+
+    setTheme(theme, reRenderCharts = true) {
+        this.state.theme = theme;
+        try {
+            localStorage.setItem('act_theme', theme);
+        } catch (e) {}
+
+        const isLight = theme === 'light';
+        const html = document.documentElement;
+
+        if (isLight) {
+            html.classList.remove('dark');
+            html.classList.add('light');
+            html.setAttribute('data-theme', 'light');
+        } else {
+            html.classList.remove('light');
+            html.classList.add('dark');
+            html.setAttribute('data-theme', 'dark');
+        }
+
+        // Update Toggle Buttons (both header and sidebar)
+        const topIcon = document.getElementById('themeToggleIcon');
+        const topLabel = document.getElementById('themeToggleLabel');
+        const sidebarIcon = document.getElementById('sidebarThemeToggleIcon');
+        const sidebarLabel = document.getElementById('sidebarThemeToggleLabel');
+
+        if (topIcon) {
+            topIcon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+            topIcon.className = isLight ? 'w-3.5 h-3.5 text-sky-600' : 'w-3.5 h-3.5 text-amber-400';
+        }
+        if (topLabel) {
+            topLabel.textContent = isLight ? 'Dark' : 'Light';
+        }
+        if (sidebarIcon) {
+            sidebarIcon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+            sidebarIcon.className = isLight ? 'w-4 h-4 text-sky-600' : 'w-4 h-4 text-amber-400';
+        }
+        if (sidebarLabel) {
+            sidebarLabel.textContent = isLight ? 'Switch to Dark' : 'Switch to Light';
+        }
+
+        if (window.lucide && typeof lucide.createIcons === 'function') {
+            lucide.createIcons();
+        }
+
+        if (reRenderCharts) {
+            this.refreshActiveTabCharts();
+        }
+    },
+
+    async refreshActiveTabCharts() {
+        const tab = this.state.activeTab;
+        try {
+            if (tab === 'overview') {
+                await this.fetchTrends();
+                await this.fetchDepartmentAnalytics();
+            } else if (tab === 'forecast') {
+                await this.fetchForecast();
+            } else if (tab === 'optimizer') {
+                await this.fetchOptimizer();
+            }
+        } catch (e) {
+            console.error('Error re-rendering charts for theme change:', e);
         }
     },
 

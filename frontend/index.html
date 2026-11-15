@@ -139,6 +139,17 @@
             </button>
         </div>
 
+        <!-- Sidebar Theme Quick Toggle -->
+        <div class="px-4 pb-2">
+            <button id="btnSidebarThemeToggle" type="button" onclick="App.toggleTheme()" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 transition-all text-xs font-medium cursor-pointer shadow-sm" title="Toggle Light / Dark Mode">
+                <span class="flex items-center gap-2">
+                    <i id="sidebarThemeToggleIcon" data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
+                    <span id="sidebarThemeToggleLabel">Switch Theme</span>
+                </span>
+                <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">Toggle</span>
+            </button>
+        </div>
+
         <!-- Footer Meta -->
         <div class="mt-auto p-4 border-t border-slate-800/80 bg-slate-950/60 text-[11px] text-slate-400 space-y-1.5 font-mono">
             <div class="flex justify-between items-center">
@@ -222,6 +233,12 @@
                     <span class="text-slate-400 font-medium hidden lg:inline">Maturity:</span>
                     <span id="kpiMaturityStage" class="font-bold text-emerald-300 font-mono whitespace-nowrap">Optimized</span>
                 </div>
+
+                <!-- Theme Toggle Control -->
+                <button id="btnThemeToggle" type="button" onclick="App.toggleTheme()" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 transition-all text-xs font-semibold cursor-pointer active:scale-95 shadow-sm shrink-0 whitespace-nowrap" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
+                    <i id="themeToggleIcon" data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span id="themeToggleLabel" class="hidden sm:inline font-mono text-[11px]">Theme</span>
+                </button>
 
                 <!-- User Profile and Explicit Logout Control -->
                 <div class="flex items-center gap-2 sm:gap-2.5 pl-2 sm:pl-3 border-l border-slate-800 shrink-0 whitespace-nowrap">
@@ -1556,8 +1573,8 @@
     <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
 
     <!-- Custom Scripts with Anti-Cache Versioning -->
-    <script src="/static/js/charts.js?v=6.1"></script>
-    <script src="/static/js/app.js?v=6.1"></script>
+    <script src="/static/js/charts.js?v=7.0"></script>
+    <script src="/static/js/app.js?v=7.0"></script>
     <script>
         lucide.createIcons();
     </script>
