@@ -24,7 +24,7 @@ class FinOpsForecaster:
     def __init__(self, forecast_horizon_days=30):
         self.forecast_horizon_days = forecast_horizon_days
         # Regularized base model for trend and Fourier harmonic extrapolation
-        self.trend_model = Ridge(alpha=1.0)
+        self.trend_model = Ridge(alpha=10.0)
         self.model = HistGradientBoostingRegressor(
             loss="squared_error",
             max_iter=180, 
@@ -60,18 +60,22 @@ class FinOpsForecaster:
         self.train_len = 0
 
     @staticmethod
-    def _build_trend_features(time_indices: np.ndarray) -> np.ndarray:
-        """Constructs polynomial trend and multi-harmonic Fourier seasonality basis."""
+    def _build_trend_features(time_indices: np.ndarray, total_len: int = 365) -> np.ndarray:
+        """Constructs polynomial trend and multi-harmonic Fourier seasonality basis with adaptive scaling."""
         t_arr = np.asarray(time_indices, dtype=float)
+        scale = max(1.0, float(total_len))
         cols = [
-            t_arr,
+            t_arr / scale,
             np.sin(2.0 * np.pi * t_arr / 7.0),
             np.cos(2.0 * np.pi * t_arr / 7.0),
             np.sin(2.0 * np.pi * t_arr / 30.4375),
-            np.cos(2.0 * np.pi * t_arr / 30.4375),
-            np.sin(2.0 * np.pi * t_arr / 91.25),
-            np.cos(2.0 * np.pi * t_arr / 91.25)
+            np.cos(2.0 * np.pi * t_arr / 30.4375)
         ]
+        if total_len >= 180:
+            cols.extend([
+                np.sin(2.0 * np.pi * t_arr / 91.25),
+                np.cos(2.0 * np.pi * t_arr / 91.25)
+            ])
         return np.column_stack(cols)
         
     def _extract_feature_row(self, dt: pd.Timestamp, detrended_history: list) -> dict:
@@ -161,12 +165,13 @@ class FinOpsForecaster:
         # Trend & Fourier Seasonality estimation
         n = len(df)
         t_indices = np.arange(n)
-        trend_basis = self._build_trend_features(t_indices)
+        scale = n if is_training else (getattr(self, "train_len", n) if getattr(self, "train_len", 0) > 0 else n)
+        trend_basis = self._build_trend_features(t_indices, scale)
         
         if is_training:
+            self.train_len = n
             split_idx = max(1, int(n * 0.85))
             self.trend_model.fit(trend_basis[:split_idx], df["DailySpend"].iloc[:split_idx])
-            self.train_len = n
             
         df["Trend"] = self.trend_model.predict(trend_basis)
         df["DetrendedSpend"] = df["DailySpend"] - df["Trend"]
@@ -370,7 +375,8 @@ class FinOpsForecaster:
         # Extrapolate linear trend and Fourier harmonics into the future horizon
         total_days = n_history + days_ahead
         all_indices = np.arange(total_days)
-        trend_basis_all = self._build_trend_features(all_indices)
+        scale = getattr(self, "train_len", n_history) if getattr(self, "train_len", 0) > 0 else n_history
+        trend_basis_all = self._build_trend_features(all_indices, scale)
         trend_all = self.trend_model.predict(trend_basis_all)
         
         history_trend = trend_all[:n_history]
